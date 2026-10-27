@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "issue": "20261023",
+  "timezone": "Asia/Tokyo",
+  "scheduled_at": "2026-10-23T08:00:00+08:00",
+  "window_start": "2026-10-16T08:00:00+08:00",
+  "window_end_exclusive": "2026-10-23T08:00:00+08:00",
+  "verified_at": "2026-10-27",
+  "topics": [
+    {
+      "topic_id": "TE-NVFP4-COMPILE-LAYOUT",
+      "category": "train",
+      "title": "NVFP4 编译必须保留真实 scale 布局",
+      "status": "已合入主分支",
+      "event_date": "10-20 UTC",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/TransformerEngine/commit/f0b1096128c0f41e18c6d0b4d6b4a3d749c0f008",
+        "https://github.com/NVIDIA/TransformerEngine/pull/3628"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "train/20261023.md#te-nvfp4-compile-layout",
+      "core_conclusion": "修复不仅涉及高维输入无法编译；Bias backward 的 fake metadata 与原生 packed tensor 不一致，会让编译 GEMM 按错误布局解释 scale，影响梯度。",
+      "open_questions": [
+        "核对后续正式版收录、最终硬件验证与实际适用路径；无实质新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "TE-NVFP4-CUBLASMP",
+      "category": "train",
+      "title": "cuBLASMp 接入 NVFP4 overlap",
+      "status": "已合入主分支",
+      "event_date": "10-21 UTC",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/TransformerEngine/commit/6b5cd7e2e43cee6da5dff9b9f86bc2ec05d7b1ad"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "train/20261023.md#te-nvfp4-cublasmp",
+      "core_conclusion": "NVFP4 进入 TE 的 cuBLASMp 通信–GEMM overlap 路径；关键是设备端 alpha/beta 与全局 scale 衔接，而不只是通信 payload 变为四比特。",
+      "open_questions": [
+        "核对后续正式版收录、最终硬件验证与实际适用路径；无实质新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "TE-SM12X-RHT",
+      "category": "train",
+      "title": "SM120/121 columnwise RHT 恢复参数传递",
+      "status": "已合入主分支",
+      "event_date": "10-19 UTC",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/TransformerEngine/commit/4a3a8a8e8578e96319467d0cc96b9f5db552a7d3"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "train/20261023.md#te-sm12x-rht",
+      "core_conclusion": "NVFP4 scale-type wrapper 接收了 `rht_matrix`，却继续传 `nullptr`，触发非空断言；补丁恢复转发。它是已有路径回归修复，不是新 RHT 算法，也不是旧周报“静默全零”的再次报道。该修改不证明历史共享内存问题同时解决；B200/SM100 用户不能套用 SM120/121 的故障边界。[固定提交](https://github.com/NVIDIA/TransformerEngine/commit/4a3a8a8e8578e96319467d0cc96b9f5db552a7d3)。",
+      "open_questions": [
+        "核对后续正式版收录、最终硬件验证与实际适用路径；无实质新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "NVFP4-LONG-HORIZON",
+      "category": "train",
+      "title": "长程 NVFP4 recipe 不能只凭短跑排名",
+      "status": "论文实验",
+      "event_date": "10-17 UTC",
+      "canonical_sources": [
+        "https://arxiv.org/html/2610.24343v1"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "train/20261023.md#nvfp4-long-horizon",
+      "core_conclusion": "《What Matters for NVFP4 Training?》比较共同训练栈下的 recipe。作者在 Nemotron-H 8B 与 30B-A3B 上训练至 1T tokens，结合一维权重量化、backward 重量化、128 维 RHT、梯度 MS-EDEN 与选择性 4over6。重要负结果是 8B 全层 NVFP4 超过约 300B tokens 后发散，主要长跑保留末尾 15% 层为 BF16。短跑可筛灾难性错误，不能据此证明长期收敛；没有可直接换算为 B200 端到端收益的统一吞吐证据。[论文 v1，表1与§4–6](https://arxiv.org/html/2610.24343v1)。\r",
+      "open_questions": [
+        "核对后续正式版收录、最终硬件验证与实际适用路径；无实质新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "DEEPINFER-PUBLIC-RUNTIME",
+      "category": "inference",
+      "title": "DeepInfer 公开可检查的运行时",
+      "status": "已公开主分支实现",
+      "event_date": "10-20 首次提交、10-21 依赖更新 UTC",
+      "canonical_sources": [
+        "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/README.md",
+        "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/doc/inference_deployment_qa.md",
+        "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/examples/README.md"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "inference/20261023.md#deepinfer-public-runtime",
+      "core_conclusion": "DeepSeek 官方 DeepInfer 首次公开，提供 DeepSeek-V4.1-Flash 的离线推理核心；并行、缓存状态和 speculative verification 可以落到实现核验，完整在线服务仍需外部系统。",
+      "open_questions": [
+        "核对后续正式版收录、最终硬件验证与实际适用路径；无实质新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "SGLANG-NVFP4-CLAMP",
+      "category": "inference",
+      "title": "gate/up 不同 scale 会改变 clamp 含义",
+      "status": "已合入主分支",
+      "event_date": "10-22 UTC",
+      "canonical_sources": [
+        "https://github.com/sgl-project/sglang/commit/9301ca37a0173fe6b5d5d53ef7ed40b76adf33e3",
+        "https://github.com/sgl-project/sglang/pull/45386"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "inference/20261023.md#sglang-nvfp4-clamp",
+      "core_conclusion": "SGLang 在加载阶段统一 gate/up 的有效 alpha，修复共享 raw clamp 被解释为不同反量化阈值的问题；原来的精度警告不能保证语义正确。",
+      "open_questions": [
+        "核对后续正式版收录、最终硬件验证与实际适用路径；无实质新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "AITER-PACKED-KV-SPAN",
+      "category": "inference",
+      "title": "packed KV 元素数不等于寻址跨度",
+      "status": "已合入主分支",
+      "event_date": "10-22 UTC",
+      "canonical_sources": [
+        "https://github.com/ROCm/aiter/commit/272586aa0901d9b558af3298109d9e77f54b50f2"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "inference/20261023.md#aiter-packed-kv-span",
+      "core_conclusion": "AITER 用 `nelement × element_size` 判断 32-bit buffer offset 是否足够；交错 K/V 的每个 strided view 只有半数元素，却可跨整个 cache，2–4 GiB 区间会误选路径。修复改用 K/V 最大可寻址字节跨度。新增测试用 40,000 blocks、BF16 packed cache 访问超过 2 GiB 的尾部，对照连续布局 reference。这是地址正确性修复，不是 FP8 精度恢复，也不证明其他 attention 后端均受影响。[实现与测试](https://github.com/ROCm/aiter/commit/272586aa0901d9b558af3298109d9e77f54b50f2)。",
+      "open_questions": [
+        "核对后续正式版收录、最终硬件验证与实际适用路径；无实质新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "MODELOPT-NATIVE-FP8-PTQ",
+      "category": "inference",
+      "title": "原生 FP8 再量化前须消费原 scale",
+      "status": "已合入主分支",
+      "event_date": "10-16 UTC",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/Model-Optimizer/commit/264fd262e0ce9667c934d7c30c75c2b5f32b2f7c"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "inference/20261023.md#modelopt-native-fp8-ptq",
+      "core_conclusion": "ModelOpt 修复 Transformers FP8Experts 校准/导出：原生 FP8 payload 不能直接当真实权重求 amax 或打包 NVFP4。新路径逐 expert projection 反量化，scale 乘法保留 FP32 到输出 cast，导出移除已消费 scale；fold 前显式 unpack。测试独立解码 packed NVFP4，以原 payload 乘原 scale 为参考。受影响导出应回原 checkpoint 重生成，不能只重命名 dtype。[固定实现与测试](https://github.com/NVIDIA/Model-Optimizer/commit/264fd262e0ce9667c934d7c30c75c2b5f32b2f7c)。\r",
+      "open_questions": [
+        "核对后续正式版收录、最终硬件验证与实际适用路径；无实质新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "TRITON-TMEM-SCALE-LIFETIME",
+      "category": "gpu",
+      "title": "同一 partition 也须等 MMA 读完 scale",
+      "status": "已合入主分支",
+      "event_date": "10-22 UTC",
+      "canonical_sources": [
+        "https://github.com/triton-lang/triton/commit/1ec1eee840b8a35b15101e5ab9a4388e905291f3"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "gpu/20261023.md#triton-tmem-scale-lifetime",
+      "core_conclusion": "Triton 修复 warp-specialized scaled matmul 的 TMEM scale 复用同步：producer 与异步 consumer 在同一 partition，不能保证下一轮覆盖 scale 时上一轮已读完。",
+      "open_questions": [
+        "核对后续正式版收录、最终硬件验证与实际适用路径；无实质新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "TRITON-ADA-FP32-ADD",
+      "category": "gpu",
+      "title": "Ada FP8 dot 外的 FP32 加法不能随意融合",
+      "status": "已合入主分支",
+      "event_date": "10-22 UTC",
+      "canonical_sources": [
+        "https://github.com/triton-lang/triton/commit/389dd29e1d135b1ba4d449476dfa501c93d7148c"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "gpu/20261023.md#triton-ada-fp32-add",
+      "core_conclusion": "Triton 为 SM89 调整默认 accumulation 配置，阻止独立 FP32 加法折入低精度累加 FP8 MMA；源代码 accumulator dtype 并不能独自决定最终数值。",
+      "open_questions": [
+        "核对后续正式版收录、最终硬件验证与实际适用路径；无实质新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "FA-UNUSED-V-TAIL",
+      "category": "inference",
+      "title": "非分页 V TMA 按真实长度零填充，防止被 mask 的尾部 NaN 污染 PV。",
+      "status": "主分支提交",
+      "event_date": "2026-10-21",
+      "canonical_sources": [
+        "https://github.com/Dao-AILab/flash-attention/commit/a6fcdfdba17bf5c643d9d2efa275222677399787"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "inference/20261023.md#fa-unused-v-tail",
+      "core_conclusion": "非分页 V TMA 按真实长度零填充，防止被 mask 的尾部 NaN 污染 PV。",
+      "open_questions": [
+        "验证目标设备/传输路径；关注正式版收录，无新证据不重报"
+      ]
+    },
+    {
+      "topic_id": "NVSHMEM-PUT-SIGNAL-ORDER",
+      "category": "gpu",
+      "title": "多 chunk put 与 signal 复用 QP，修复接收竞态；作者日期与主分支提交日期不同。",
+      "status": "主分支提交",
+      "event_date": "2026-10-19",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/nvshmem/commit/63da6921a1dbf184a4da293bf3b4cba8af113cee"
+      ],
+      "last_verified_at": "2026-10-27",
+      "last_reported_at": "gpu/20261023.md#nvshmem-put-signal-order",
+      "core_conclusion": "多 chunk put 与 signal 复用 QP，修复接收竞态；作者日期与主分支提交日期不同。",
+      "open_questions": [
+        "验证目标设备/传输路径；关注正式版收录，无新证据不重报"
+      ]
+    }
+  ],
+  "watchlist": [
+    {
+      "topic_id": "RUBIN-ADAPTIVE-COMPRESSION",
+      "status": "historical claims not revalidated; no new claim this issue",
+      "last_reported_at": "gpu/0928.md",
+      "open_questions": [
+        "产品命名与公开压缩机制的直接证据；物理执行粒度与端到端收益"
+      ]
+    }
+  ],
+  "coverage_limitations": [
+    "Dynamo page 2 blocked by GitHub unauthenticated rate limit; first 100 commits only",
+    "Paper/vendor searches are not exhaustive"
+  ],
+  "history_scanned": [
+    "train/0925.md",
+    "train/0918.md",
+    "train/0904.md",
+    "train/0828.md",
+    "train/0821.md",
+    "train/0814.md",
+    "inference/0925.md",
+    "inference/0918.md",
+    "inference/0911.md",
+    "inference/0904.md",
+    "inference/0828.md",
+    "inference/0821.md",
+    "gpu/0928.md",
+    "gpu/0921.md",
+    "gpu/0914.md",
+    "gpu/0831.md",
+    "gpu/0827.md",
+    "gpu/0820.md"
+  ],
+  "publication_date": "2026-10-27"
+}
