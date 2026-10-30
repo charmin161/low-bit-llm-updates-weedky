@@ -1,11 +1,4 @@
 {
-  "schema_version": 1,
-  "issue": "20261030",
-  "timezone": "Asia/Tokyo",
-  "scheduled_at": "2026-10-30T09:00:00+09:00",
-  "window_start": "2026-10-23T09:00:00+09:00",
-  "window_end_exclusive": "2026-10-30T09:00:00+09:00",
-  "verified_at": "2026-10-30T08:16:04.349049+00:00",
   "topics": [
     {
       "topic_id": "TE-NVFP4-COMPILE-LAYOUT",
@@ -204,84 +197,6 @@
       ]
     },
     {
-      "topic_id": "ALTO-MXFP4",
-      "category": "train",
-      "title": "ALTO：把权重量化跳变纳入优化器",
-      "status": "论文实验",
-      "event_date": "10-23 首发、10-26 v2 UTC",
-      "canonical_sources": [
-        "arxiv:2610.32229"
-      ],
-      "source_urls": [
-        "https://arxiv.org/html/2610.32229v2",
-        "https://arxiv.org/html/2610.32229v2#S6"
-      ],
-      "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
-      "last_reported_at": "train/20261030.md#alto-mxfp4",
-      "core_conclusion": "《Training an MoE LLM in MXFP4: How We Closed the Gap to BF16》给出 GPT-OSS-20B 的稳定性组合配方；最有价值的是消除权重振荡的端到端证据，而非四比特硬件速度宣称。",
-      "open_questions": [
-        "跟踪正式版或原生执行的端到端精度/速度证据；无实质变化不重报"
-      ]
-    },
-    {
-      "topic_id": "THINKBIT-REASONING",
-      "category": "train",
-      "title": "ThinkBit：用推理表现选择两比特恢复阶段",
-      "status": "论文实验",
-      "event_date": "10-26 UTC",
-      "canonical_sources": [
-        "arxiv:2610.34886"
-      ],
-      "source_urls": [
-        "https://arxiv.org/html/2610.34886v1",
-        "https://arxiv.org/html/2610.34886v1#S6"
-      ],
-      "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
-      "last_reported_at": "train/20261030.md#thinkbit-reasoning",
-      "core_conclusion": "《ThinkBit: Search Codewords, Recalibrate Scales, Select by Reasoning》表明，量化恢复后的困惑度改善与推理质量改善可以分离；因此按后训练质量贡献归入本栏。",
-      "open_questions": [
-        "跟踪正式版或原生执行的端到端精度/速度证据；无实质变化不重报"
-      ]
-    },
-    {
-      "topic_id": "TE-GROUP-ROW-NVFP4",
-      "category": "train",
-      "title": "TE：动态 expert 路由可复用 row-scaled NVFP4 量化图",
-      "status": "主分支提交",
-      "event_date": "10-27 UTC",
-      "canonical_sources": [
-        "NVIDIA/TransformerEngine@89668d9dee82aba9b9107b37ed85227542a578d2"
-      ],
-      "source_urls": [
-        "https://github.com/NVIDIA/TransformerEngine/commit/89668d9dee82aba9b9107b37ed85227542a578d2"
-      ],
-      "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
-      "last_reported_at": "train/20261030.md#te-group-row",
-      "core_conclusion": "row-scaled NVFP4 经统一 grouped quantize 接口获得设备端路由与 graph-safe amax/cast 路径；这是训练量化供给端的能力扩展，没有报告完整 step 加速。",
-      "open_questions": [
-        "跟踪正式版或原生执行的端到端精度/速度证据；无实质变化不重报"
-      ]
-    },
-    {
-      "topic_id": "TE-MXFP8-ROW-MASTER",
-      "category": "train",
-      "title": "MXFP8 master-weight cast 可只生成 rowwise",
-      "status": "主分支提交",
-      "event_date": "10-27 UTC",
-      "canonical_sources": [
-        "NVIDIA/TransformerEngine@38509867458c686b3ebc3af9a713c9fec7b1ad7b"
-      ],
-      "source_urls": [
-        "https://github.com/NVIDIA/TransformerEngine/commit/38509867458c686b3ebc3af9a713c9fec7b1ad7b"
-      ],
-      "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
-      "last_reported_at": "train/20261030.md#te-row-master",
-      "core_conclusion": "TE 根据输出 storage 是否存在选择 columnwise 计算，row-only primary 不再必做该方向的 amax、scale 更新与写出；请求 columnwise 时必须提供对应 scales。测试覆盖跨 32 元素 block 的 shard 边界、空 rank 和混合单双向权重。它减少无用表示和通信统计，未证明所有 backward 都能省掉转置权重，也不改 master weight 精度；尚无 step 吞吐结论。[固定 diff 与测试](https://github.com/NVIDIA/TransformerEngine/commit/38509867458c686b3ebc3af9a713c9fec7b1ad7b)。",
-      "open_questions": [
-        "跟踪正式版或原生执行的端到端精度/速度证据；无实质变化不重报"
-      ]
-    },
-    {
       "topic_id": "MODELOPT-TP-KL",
       "category": "train",
       "title": "正确的 KL 数值可能掩盖错误的 TP 梯度",
@@ -293,73 +208,14 @@
       "source_urls": [
         "https://github.com/NVIDIA/Model-Optimizer/commit/8fef2144a3c4a163c8cd8c886b78e914519f7296"
       ],
-      "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
-      "last_reported_at": "train/20261030.md#modelopt-tp-kl",
+      "last_verified_at": "2026-10-30T16:16:04.349049+08:00",
+      "last_reported_at": "https://github.com/charmin161/low-bit-llm-updates-weedky/blob/23f98d9a2002cd451acfe09973d38f3658cbc4a1/train/20261030.md#modelopt-tp-kl",
       "core_conclusion": "ModelOpt 修复 Top-K/Top-P 蒸馏中每个 TP rank 重复计算全局 loss、autograd collective 又累加梯度的倍乘。新式 `detach(loss)+(loss-detach(loss))/TP` 只缩放 backward。作者报告 A800 上 TP1/2/4 各 13 项定向测试通过，并以旧实现使梯度 reference 失败作负对照。该风险直接影响 QAD 更新幅度，不能靠 loss 日志排除；dense KL 不受此项改变，长期收敛未评估，短微基准不作为加速依据。[实现与验证说明](https://github.com/NVIDIA/Model-Optimizer/commit/8fef2144a3c4a163c8cd8c886b78e914519f7296)。",
       "open_questions": [
         "跟踪正式版或原生执行的端到端精度/速度证据；无实质变化不重报"
-      ]
-    },
-    {
-      "topic_id": "LLAMACPP-KV-DPAS",
-      "category": "inference",
-      "title": "Intel XMX 直接消费量化 KV 的 decode 路径",
-      "status": "主分支提交",
-      "event_date": "10-29 UTC",
-      "canonical_sources": [
-        "ggml-org/llama.cpp@f7c01c5226cac1de1052c17920ff38cdefea0ae6",
-        "https://github.com/ggml-org/llama.cpp/pull/31125"
       ],
-      "source_urls": [
-        "https://github.com/ggml-org/llama.cpp/commit/f7c01c5226cac1de1052c17920ff38cdefea0ae6",
-        "https://github.com/ggml-org/llama.cpp/pull/31125"
-      ],
-      "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
-      "last_reported_at": "inference/20261030.md#intel-kv-dpas",
-      "core_conclusion": "llama.cpp SYCL 将 q4_0/q8_0 KV 的小 batch attention 接到 DPAS，避免每次调用先构造整份 FP16 cache；这是有生成吞吐证据的低比特执行集成。",
-      "open_questions": [
-        "跟踪正式版或原生执行的端到端精度/速度证据；无实质变化不重报"
-      ]
-    },
-    {
-      "topic_id": "SGLANG-ASCEND-BLOCK-FP8",
-      "category": "inference",
-      "title": "Ascend block-FP8：保留原 scale 与重量化是两条路径",
-      "status": "主分支提交",
-      "event_date": "10-29 UTC",
-      "canonical_sources": [
-        "sgl-project/sglang@019008afe0b0a61aa46c1f32dbcd6478f1c09220",
-        "https://github.com/sgl-project/sglang/pull/46212"
-      ],
-      "source_urls": [
-        "https://github.com/sgl-project/sglang/commit/019008afe0b0a61aa46c1f32dbcd6478f1c09220",
-        "https://github.com/sgl-project/sglang/pull/46212"
-      ],
-      "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
-      "last_reported_at": "inference/20261030.md#ascend-block-fp8",
-      "core_conclusion": "SGLang 新增 Qwen3.6-35B-A3B block-FP8 MoE 支持，代码明确区分 checkpoint FP32 block scale 的原生 G-B 路径与可选 MXFP8 重量化路径。",
-      "open_questions": [
-        "跟踪正式版或原生执行的端到端精度/速度证据；无实质变化不重报"
-      ]
-    },
-    {
-      "topic_id": "VLLM-NVFP4-REQUANT",
-      "category": "inference",
-      "title": "NVFP4 checkpoint 在 ROCm 上成为重量化输入",
-      "status": "主分支提交",
-      "event_date": "10-29 UTC",
-      "canonical_sources": [
-        "vllm-project/vllm@2abde627d973ad28d577133bdac5472bb00ee255"
-      ],
-      "source_urls": [
-        "https://github.com/vllm-project/vllm/commit/2abde627d973ad28d577133bdac5472bb00ee255"
-      ],
-      "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
-      "last_reported_at": "inference/20261030.md#nvfp4-requant",
-      "core_conclusion": "vLLM 将来源权重加载与目标在线量化分开：NVFP4 MoE 按 expert chunk 反量化，再交给目标 quantizer；来源阶段跳过原生后端选择，避免为了读取 checkpoint 就要求 NVFP4 执行能力。测试比较不同 chunk 大小与完整反量化结果，并覆盖 shared expert 融合。收益首先是加载可达性和峰值临时存储控制；目标可能为 MXFP4/MXFP8 等，不能称 ROCm 原生执行 NVFP4。重量化增加误差与加载成本，尚无统一模型质量/速度结论。[固定实现](https://github.com/vllm-project/vllm/commit/2abde627d973ad28d577133bdac5472bb00ee255)。",
-      "open_questions": [
-        "跟踪正式版或原生执行的端到端精度/速度证据；无实质变化不重报"
-      ]
+      "last_reported_commit": "23f98d9a2002cd451acfe09973d38f3658cbc4a1",
+      "editorial_note": "本期修订版以能力扩展和跨平台广度为主，此项保留在原版历史记录，不列入当前推荐。"
     },
     {
       "topic_id": "VLLM-NVFP4-SCALE-PADDING",
@@ -368,41 +224,437 @@
       "status": "主分支提交",
       "event_date": "10-29 UTC",
       "canonical_sources": [
-        "vllm-project/vllm@b42f25b00c3d13b565ec60e81928cd21efefce32",
-        "deepseek-ai/DeepInfer@553741557a57df44a46fb3ab72b6aafeaf945337",
-        "https://github.com/deepseek-ai/DeepInfer/blob/553741557a57df44a46fb3ab72b6aafeaf945337/README.md"
+        "vllm-project/vllm@b42f25b00c3d13b565ec60e81928cd21efefce32"
       ],
       "source_urls": [
         "https://github.com/vllm-project/vllm/commit/b42f25b00c3d13b565ec60e81928cd21efefce32",
         "https://github.com/deepseek-ai/DeepInfer/commit/553741557a57df44a46fb3ab72b6aafeaf945337",
         "https://github.com/deepseek-ai/DeepInfer/blob/553741557a57df44a46fb3ab72b6aafeaf945337/README.md"
       ],
-      "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
-      "last_reported_at": "inference/20261030.md#nvfp4-scale-padding",
+      "last_verified_at": "2026-10-30T16:16:04.349049+08:00",
+      "last_reported_at": "https://github.com/charmin161/low-bit-llm-updates-weedky/blob/23f98d9a2002cd451acfe09973d38f3658cbc4a1/inference/20261030.md#nvfp4-scale-padding",
       "core_conclusion": "vLLM 修复 SiLU×gate 后融合 NVFP4 量化未写满 scale padding 的问题。GEMM 按对齐布局读取，逻辑有效区正确仍可能读到脏 scale，产生 NaN 或乱码。新增测试先用 `0x7F7F7F7F` 污染 scale 缓冲，检查行列 padding 被覆盖，覆盖 M=1/90/130 等非整齐形状。它修复元数据初始化，不改变量化 recipe，来源未提供模型质量恢复幅度或吞吐收益；不能扩张为所有 NVFP4 后端的故障。[diff 与回归](https://github.com/vllm-project/vllm/commit/b42f25b00c3d13b565ec60e81928cd21efefce32)。",
       "open_questions": [
         "跟踪正式版或原生执行的端到端精度/速度证据；无实质变化不重报"
+      ],
+      "last_reported_commit": "23f98d9a2002cd451acfe09973d38f3658cbc4a1",
+      "editorial_note": "本期修订版以能力扩展和跨平台广度为主，此项保留在原版历史记录，不列入当前推荐。"
+    },
+    {
+      "topic_id": "ALTO-MXFP4",
+      "category": "train",
+      "title": "ALTO：稳定四比特训练，不能只优化单次量化误差",
+      "status": "论文更新",
+      "event_date": "2026-10-26",
+      "canonical_sources": [
+        "https://arxiv.org/html/2610.32229v2"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "train/20261030.md#alto-mxfp4",
+      "core_conclusion": "AMD 团队在 GPT-OSS-20B 上结合分组量化、随机旋转、梯度随机舍入与“权重去振荡”，减少权重反复跨越量化档位的问题。达到同一验证损失目标时，相对 BF16 多出的训练步数由 20% 降到 5%。值得关注其负结果：一些改善算子误差的方法，反而没改善最终收敛。实验用 MI300X 模拟 MXFP4 数值，尚不能据此判断原生四比特训练的总耗时。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "THINKBIT-REASONING",
+      "category": "train",
+      "title": "ThinkBit：两比特压缩之后，要按推理能力选择模型",
+      "status": "论文发布",
+      "event_date": "2026-10-26",
+      "canonical_sources": [
+        "https://arxiv.org/html/2610.34886v1"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "train/20261030.md#thinkbit-reasoning",
+      "core_conclusion": "方法先分配不同层的位宽并搜索量化值，再通过蒸馏校准缩放参数，最后尝试短程量化感知训练。它用推理题表现选择最终模型，避免只追求困惑度下降。Qwen3-14B 的示例压到 3.74 GB，MATH-500 为 94.8，BF16 为 97.5；其他任务仍有损失。紧凑文件与实际运行格式要分开看：论文的 vLLM 路径使用四比特容器，不能称为原生两比特计算。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "TE-GROUP-ROW-NVFP4",
+      "category": "train",
+      "title": "NVFP4 分组量化：适应 MoE 每步变化的专家负载",
+      "status": "已合入",
+      "event_date": "2026-10-27",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/TransformerEngine/commit/89668d9dee82aba9b9107b37ed85227542a578d2"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "train/20261030.md#te-group-row",
+      "core_conclusion": "新路径允许 GPU 上的路由信息驱动逐行缩放的 NVFP4 分组量化，同一个 CUDA Graph 可以在专家 token 数变化后重放。它改善的是“路由之后如何高效准备低比特数据”，有助于减少逐专家调用和重建执行图的开销。当前仍有对齐和量化配方限制，尚无完整训练步的加速数据。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "TE-MXFP8-ROW-MASTER",
+      "category": "train",
+      "title": "MXFP8 权重转换：按实际需要生成行向或列向表示",
+      "status": "已合入",
+      "event_date": "2026-10-27",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/TransformerEngine/commit/38509867458c686b3ebc3af9a713c9fec7b1ad7b"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "train/20261030.md#te-row-master",
+      "core_conclusion": "分布式主权重转换现在可以只生成行向 MXFP8 数据，省去没有消费者的列向统计和写出。意义在于减少量化准备阶段的冗余工作，而不是继续降低位宽。需要反向或转置表示的算子仍须保留相应数据；主权重精度也没有因此降低，完整训练收益尚待评估。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "MODELOPT-QAT-CACHE",
+      "category": "train",
+      "title": "QAT/QAD 权重缓存：同一步内不必反复模拟量化",
+      "status": "已合入",
+      "event_date": "2026-10-28",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/Model-Optimizer/pull/3034"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "train/20261030.md#modelopt-qat-cache",
+      "core_conclusion": "在一次优化器更新前，权重并未变化，但微批次前向与激活重计算会重复做模拟量化。新增缓存复用这份结果，用额外显存换取更少的重复计算。它适用于量化感知训练和蒸馏，需显式启用并满足量化器条件；缓存的是高精度表示的量化结果，不能当作原生 FP4 训练或显存压缩功能。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "MODELOPT-SHARDED-NVFP4",
+      "category": "train",
+      "title": "分布式 NVFP4 导出：补齐分片权重的打包环节",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/Model-Optimizer/pull/3099"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "train/20261030.md#modelopt-sharded-nvfp4",
+      "core_conclusion": "ModelOpt 增加 NVFP4 分布式张量分片的正确打包，并在 FSDP2 允许更新权重的阶段处理数据，避免重新分片时把量化结果换回浮点权重。这是大模型分布式量化导出的基础能力，可减少必须汇总整个模型的压力；完整“不汇总导出”仍属于后续组合功能，INT4、NF4、MXFP4 也不能直接套用同样的分片支持。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "COMPRESSOR-AUTO-SUBGRAPHS",
+      "category": "train",
+      "title": "自动按显存分组校准：减少手工选择一次处理几层",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/vllm-project/llm-compressor/pull/3271"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "train/20261030.md#compressor-auto-subgraphs",
+      "core_conclusion": "新增自动子图分组，根据可用显存、权重与校准临时数据，决定一次处理多少连续层。GPTQ、AWQ、SmoothQuant 等方法可减少逐层搬运或分组过大的问题，适合关注大模型量化工具的易用性与资源效率。它是内存规划估算，并非绝不溢出的保证；无法估算的算法、流式数据等情况会退回保守路径。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "QUARK-EAGLE3-TRAINING",
+      "category": "train",
+      "title": "Quark 把草稿模型训练与 MXFP4 目标模型接成完整流程",
+      "status": "官方技术博客",
+      "event_date": "2026-10-27",
+      "canonical_sources": [
+        "https://rocm.blogs.amd.com/artificial-intelligence/eagle3-training/README.html"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "train/20261030.md#quark-eagle3",
+      "core_conclusion": "Quark 0.13 提供实验性 EAGLE3 工作流，连接 vLLM 隐藏状态提取、TorchSpec/FSDP2 训练和推理导出。MI350X 示例以 MXFP4 MiniMax-M3 为目标模型，让草稿模型学习实际部署模型的输出。作者在指定 SPEED-Bench 配置下报告输出吞吐提高 47%，但首 token 延迟增加 18.5%。这里的新价值是训练到部署的适配完整性；草稿训练本身并未被证明全部使用低比特计算。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "AMD-MI308X-RL",
+      "category": "train",
+      "title": "MI308X 强化学习案例：BF16 训练与 FP8 生成协同工作",
+      "status": "官方技术博客",
+      "event_date": "2026-10-28",
+      "canonical_sources": [
+        "https://rocm.blogs.amd.com/ecosystems-and-partners/deepseek-v4-mi308-aiter-backed-rl/README.html"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "train/20261030.md#amd-mi308x-rl",
+      "core_conclusion": "AMD 展示三节点 DeepSeek-V4 Flash 强化学习流程：Megatron-LM/AITER 负责 BF16 策略训练，vLLM 使用 FP8 权重和 KV cache 生成轨迹，更新后的权重在线传输并重新量化。75 步案例覆盖了生成、训练、评估与恢复。值得关注跨框架的量化一致性和权重更新链路；这是特定配置的完整运行案例，未提供可推广的低比特训练加速比例。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "VLLM-NVFP4-REQUANT",
+      "category": "inference",
+      "title": "NVFP4 模型可转换到 ROCm 的量化执行路径",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/vllm-project/vllm/commit/2abde627d973ad28d577133bdac5472bb00ee255"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "inference/20261030.md#vllm-nvfp4-requant",
+      "core_conclusion": "vLLM 增加 MoE 权重在线重新量化：加载 NVFP4 checkpoint 后，分块解码，再转换为目标平台支持的 MXFP4 或 MXFP8 表示，并处理共享专家。它扩大了现有模型在 AMD 平台上的可用范围。关键区别是“转换后运行”，并非 AMD 原生执行 NVFP4；二次量化的精度变化与最终速度仍需按模型评估。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "VLLM-ROCM-FUSED-MXFP8",
+      "category": "inference",
+      "title": "MXFP8 小批量解码：把激活量化直接融入矩阵乘",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/vllm-project/vllm/pull/63179"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "inference/20261030.md#vllm-rocm-fused-mxfp8",
+      "core_conclusion": "MI355X 路径把小 token 数下的 MXFP8 激活量化放进 GEMM 内部，减少一次启动与中间数据往返；同时避开大词表权重不适合的特定小矩阵内核。作者在 DeepSeek-V4.1-Flash 指定配置中报告解码间隔约减少 2%。值得关注其通用思路：位宽已经很低后，数据移动和调度仍可能成为主要成本。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "SGLANG-ASCEND-BLOCK-FP8",
+      "category": "inference",
+      "title": "昇腾 NPU 增加 block FP8 Linear 与 MoE 路径",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/sgl-project/sglang/pull/46212"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "inference/20261030.md#sglang-ascend-fp8",
+      "core_conclusion": "新增 Qwen3.6-35B-A3B 的 block FP8 适配，允许保留原有分块 FP8 表示执行，另有加载时转为 MXFP8 的路径。它让“沿用模型原始量化格式”成为可比较的选择，减少必须重新量化的需求。关注点是 CANN 算子、缩放参数与 MoE 调度能否配套；不能仅凭都叫 FP8，就认为两条路径精度和速度相同。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "SGLANG-RDNA-W4A16",
+      "category": "inference",
+      "title": "RDNA 平台可用 W4A16 运行 Quark MXFP4 MoE",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/sgl-project/sglang/pull/41389"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "inference/20261030.md#sglang-rdna-w4a16",
+      "core_conclusion": "新路径用 Triton 在计算时展开四比特权重，激活保留 BF16，使缺少相应 FP4 硬件路径的 Radeon 8060S / gfx1151 也能正确运行 Quark MXFP4 MoE。作者的 Qwen3.5 示例中，16 并发吞吐提高约 1.7 倍，但单请求生成略慢于 BF16。它是很有价值的兼容性进展，也说明省权重空间与低延迟加速不是同一件事。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "FLASHINFER-QSA-FORMATS",
+      "category": "inference",
+      "title": "稀疏注意力扩大 KV 格式支持：FP8、BF16 与 NVFP4",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/flashinfer-ai/flashinfer/pull/7794"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "inference/20261030.md#flashinfer-qsa-formats",
+      "core_conclusion": "实验性 QSA 稀疏分页注意力内核在 SM80–SM90 上新增 FP8、BF16 KV cache，并优化 NVFP4 数据搬运和结果合并。值得关注的是同一类注意力逐步获得多种精度选择，便于按显存与性能权衡。这里的低比特缓存会按计算需要解码，不代表这些 GPU 获得原生 FP4 矩阵指令；速度也随形状变化。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "FLASHINFER-LAUNCH-INIT",
+      "category": "inference",
+      "title": "FP4/MXFP8 调用优化：去掉重复初始化",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/flashinfer-ai/flashinfer/pull/6282"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "inference/20261030.md#flashinfer-launch",
+      "core_conclusion": "多条 CUTLASS GEMM 和 MLA 调用路径原先会重复准备描述符，新实现复用已初始化的参数。它主要减少 CPU 发起调用的成本，对没有 CUDA Graph、矩阵很小的解码场景更有意义。此类优化不会普遍提高 GPU 的矩阵计算吞吐，却提醒我们：当低比特内核变快，外围调用开销会更显眼。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "LLAMACPP-OCP-FP8",
+      "category": "inference",
+      "title": "ggml 引入 OCP FP8 E4M3 基础格式",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/ggml-org/llama.cpp/pull/27512"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "inference/20261030.md#llamacpp-ocp-fp8",
+      "core_conclusion": "ggml 新增 OCP E4M3 的饱和转换表示，推动格式体系从既有 GGUF 量化类型向标准 FP8 扩展。当前合入的是基础类型能力；KV cache、CUDA、Vulkan 后端与缩放参数衔接仍分属其他改动。跟踪时应继续看“格式进入框架”之后哪些实际算子能消费它，避免把基础类型支持当作完整 FP8 推理支持。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "TENSORRT-GLOBAL-TUNER",
+      "category": "inference",
+      "title": "自动调优从单一默认策略转向“精度合格后选最快”",
+      "status": "官方技术博客",
+      "event_date": "2026-10-23",
+      "canonical_sources": [
+        "https://developer.nvidia.com/blog/scaling-nvidia-tensorrt-performance-optimization-beyond-a-single-build-route-with-the-global-performance-tuner-part-2/"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "inference/20261030.md#tensorrt-global-tuner",
+      "core_conclusion": "TensorRT 11.1 的 Global Performance Tuner 搜索不同编译与调度组合，先过滤精度不合格的候选，再按端到端速度选择。官方十个工作负载的结果为默认路径的 1.14–1.63 倍。它与低比特选型相关的价值是把精度约束纳入调优流程；文中的自动插入量化节点是概念示例，不代表当前版本提供任意自动混合精度搜索。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "TRTLLM-MINIMAX-DSPARK",
+      "category": "inference",
+      "title": "MiniMax DSpark 草稿模型适配：量化权重与注意力语义要一起处理",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/TensorRT-LLM/pull/20922"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "inference/20261030.md#trtllm-dspark",
+      "core_conclusion": "TensorRT-LLM 为 MiniMax-M3.1-Flash 配套 DSpark 草稿模型增加配置、权重映射和窗口注意力处理。草稿权重中的 MXFP8 会先解码为计算精度，不应视为草稿模型已经原生使用 MXFP8 计算。该更新有助于让新模型接入投机解码；目标模型加载仍有配套依赖，特定长提示与分离部署配置也有已知限制。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "NVIDIA-SPARK-MOE",
+      "category": "gpu",
+      "title": "DGX Spark 官方博客：MXFP4、FP8 输出层与投机解码怎样配合",
+      "status": "技术博客",
+      "event_date": "2026-10-27",
+      "canonical_sources": [
+        "https://developer.nvidia.com/blog/3-ways-to-boost-moe-inference-on-nvidia-dgx-spark/"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "gpu/20261030.md#nvidia-spark-moe",
+      "core_conclusion": "NVIDIA 用 Ling-3.0-flash 展示三项组合：替换 MXFP4 MoE 内核、把输出层权重转为 FP8、加入多 token 预测。共同目标是减少读取权重的成本和生成所需轮次。GSM8K 的单请求评估中，输出吞吐提高 42.5%，准确率基本持平；合成负载的增幅明显更大。值得关注的是框架接口一致性：草稿模型若没有共享完整的量化输出层，组合反而会失效。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "FLASHINFER-RUBIN-MOE",
+      "category": "gpu",
+      "title": "Rubin：FlashInfer 扩大 FP4 MoE 的可选执行方案",
+      "status": "已合入",
+      "event_date": "2026-10-27",
+      "canonical_sources": [
+        "https://github.com/flashinfer-ai/flashinfer/pull/7027"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "gpu/20261030.md#flashinfer-rubin-moe",
+      "core_conclusion": "FlashInfer 修正 Rubin/SM107 的调优候选过滤，让成对线程块协作的大 tile 方案和更多 cluster 配置进入自动选择。作者报告特定大批量 MoE 算子耗时下降约 12%–17%，小批量基本不变。它说明新硬件能力需要编译器与框架把正确方案暴露出来；这次是软件适配进展，不是新硬件规格发布，也不是全模型加速比例。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "AMD-WARP-PIPELINING",
+      "category": "gpu",
+      "title": "官方博客：让数据准备与矩阵计算错开执行",
+      "status": "技术博客",
+      "event_date": "2026-10-27",
+      "canonical_sources": [
+        "https://rocm.blogs.amd.com/software-tools-optimization/triton-warp-pipeline/README.html"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "gpu/20261030.md#amd-warp-pipelining",
+      "core_conclusion": "AMD 介绍 Triton warp-pipelining：让两组执行单元保持一个阶段的错位，一组计算时另一组准备数据，减少矩阵单元等待。文章讨论 MI300X、MI350、MI450 的不同调度条件。MI355X 的 FP16 示例接近手工调优性能，不能转述成低比特加速数据；但流水组织、寄存器与共享内存的取舍，对研究低比特内核同样有参考价值。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
       ]
     },
     {
       "topic_id": "TRITON-GFX1250-MX",
       "category": "gpu",
-      "title": "GFX1250-strict：WMMA 与 scaled upcast 打开不同边界",
-      "status": "主分支提交",
-      "event_date": "10-28 UTC",
+      "title": "Triton：gfx1250-strict 开放更多带缩放的矩阵指令",
+      "status": "已合入",
+      "event_date": "2026-10-28",
       "canonical_sources": [
-        "triton-lang/triton@96ffafdd35cbd70f0a12a81ba2b3d1acb43888a2",
-        "triton-lang/triton@8afd743d38de3937f8a2874b48dfcd781312342f"
-      ],
-      "source_urls": [
         "https://github.com/triton-lang/triton/commit/96ffafdd35cbd70f0a12a81ba2b3d1acb43888a2",
         "https://github.com/triton-lang/triton/commit/8afd743d38de3937f8a2874b48dfcd781312342f"
       ],
-      "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
-      "last_reported_at": "gpu/20261030.md#amd-strict-mx",
-      "core_conclusion": "Triton 在 LLVM 更新后移除过时的 strict WMMA 限制，同时为 block32 scaled upcast 启用硬件路径；block16 所需布局仍走软件实现。",
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "gpu/20261030.md#triton-gfx1250",
+      "core_conclusion": "LLVM 能力补齐后，Triton 移除旧限制，让更多 FP4/FP8 相关 WMMA 路径可用于 gfx1250-strict；同时启用 32 元素分组的硬件缩放转换。16 元素分组仍可能走软件路径。值得关注的是分组大小会直接影响是否命中硬件指令；这些编译器变化还不能证明所有上层框架已经适配，或已有统一的端到端收益。",
       "open_questions": [
-        "跟踪正式版或原生执行的端到端精度/速度证据；无实质变化不重报"
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "AITER-MXFP8-ATTENTION",
+      "category": "gpu",
+      "title": "AITER：新增 gfx1250 的 MXFP8 注意力内核",
+      "status": "已合入",
+      "event_date": "2026-10-28",
+      "canonical_sources": [
+        "https://github.com/ROCm/aiter/pull/7045"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "gpu/20261030.md#aiter-mxfp8-attention",
+      "core_conclusion": "AITER 新增 MXFP8 多头注意力内核，通过进一步拆分计算 tile 与提前准备数据改善执行效率，并支持因果注意力、分组查询注意力和不等长序列。关注点在于 MX 格式正从线性层扩展到注意力算子。当前证据主要是该内核实现与算子测试，不能直接外推为整个 LLM 服务的加速结果。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "AITER-MXFP4-STAGED-TUNER",
+      "category": "gpu",
+      "title": "AITER：MXFP4 MoE 调优改为分阶段搜索",
+      "status": "已合入",
+      "event_date": "2026-10-28",
+      "canonical_sources": [
+        "https://github.com/ROCm/aiter/pull/6461"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "gpu/20261030.md#aiter-mxfp4-tuner",
+      "core_conclusion": "原先要逐一测量前后两个 GEMM 的大量组合；新策略先分别筛选候选，再验证少量完整 MoE 组合，同时保留回退路径。它降低的是“找到合适内核配置”的成本，有利于适配更多专家形状和模型。最终仍由完整 MoE 测量决定胜出方案，不能把搜索更快写成推理本身同幅度加速。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "LLAMACPP-KV-DPAS",
+      "category": "gpu",
+      "title": "llama.cpp：量化 KV 直接进入 XMX 的整数点积路径",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/ggml-org/llama.cpp/pull/31125"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "gpu/20261030.md#llamacpp-kv-dpas",
+      "core_conclusion": "SYCL 后端为 Xe2 增加 Q4/Q8 KV cache 注意力路径：QK 点积直接消费压缩缓存，减少先把整份缓存还原成 FP16 的开销。Arc B580、Llama 3.1 8B、16K 上下文示例中，生成从 31.3 升到 54.2 token/s。该结果只有单次端到端测量，不能泛化成普遍增幅；新路径面向解码和小批量，提示处理不变，其他型号与 Windows 尚未得到同等验证。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
+      ]
+    },
+    {
+      "topic_id": "LLAMACPP-METAL-MXFP4",
+      "category": "gpu",
+      "title": "Metal：优化 MXFP4 解码与小算子的并行执行",
+      "status": "已合入",
+      "event_date": "2026-10-29",
+      "canonical_sources": [
+        "https://github.com/ggml-org/llama.cpp/pull/31075"
+      ],
+      "last_verified_at": "2026-10-30",
+      "last_reported_at": "gpu/20261030.md#llamacpp-metal-mxfp4",
+      "core_conclusion": "llama.cpp 用更轻的位操作展开 FP4，并改善权重读取；同时调整逐元素和 GLU 算子的线程分配。在 M3 Ultra 的 Qwen3-4B MXFP4 示例中，生成吞吐由 131.7 升至 154.4 token/s，提示处理基本不变。增幅来自多项改动共同作用，不能全部归给 FP4 解码；这也不意味着 Apple GPU 新增了原生 FP4 矩阵硬件。",
+      "open_questions": [
+        "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
       ]
     }
   ],
@@ -420,16 +672,11 @@
       "last_verified_at": "2026-10-30T08:16:04.349049+00:00",
       "last_verified_commit": "553741557a57df44a46fb3ab72b6aafeaf945337",
       "status": "Only strict boolean parsing changed in window; no new capability claim",
-      "last_reported_at": "inference/20261030.md",
+      "last_reported_at": "https://github.com/charmin161/low-bit-llm-updates-weedky/blob/23f98d9a2002cd451acfe09973d38f3658cbc4a1/inference/20261030.md",
       "open_questions": [
         "官方完整 serving 交付和支持范围变化"
       ]
     }
-  ],
-  "coverage_limitations": [
-    "FlashInfer API pagination stopped after 600 commits by HTTP 403 rate limit; window incomplete.",
-    "Selected PR metadata API requests rate-limited; main-branch commit timestamps and fixed diffs used, not inferred CI outcomes.",
-    "Marlin standalone upstream and some vendor version documentation not fully inspected; paper search not exhaustive."
   ],
   "history_scanned": [
     "train/0925.md",
@@ -461,28 +708,11 @@
     "inference/1016.md",
     "inference/1009.md",
     "inference/1002.md",
-    "gpu/20261023.md"
-  ],
-  "publication_date": "2026-10-30",
-  "issue_history": [
-    {
-      "issue": "20261023",
-      "window_start": "2026-10-16T08:00:00+08:00",
-      "window_end_exclusive": "2026-10-23T08:00:00+08:00",
-      "publication_date": "2026-10-27"
-    }
-  ],
-  "current_topic_ids": [
-    "ALTO-MXFP4",
-    "THINKBIT-REASONING",
-    "TE-GROUP-ROW-NVFP4",
-    "TE-MXFP8-ROW-MASTER",
-    "MODELOPT-TP-KL",
-    "LLAMACPP-KV-DPAS",
-    "SGLANG-ASCEND-BLOCK-FP8",
-    "VLLM-NVFP4-REQUANT",
-    "VLLM-NVFP4-SCALE-PADDING",
-    "TRITON-GFX1250-MX"
+    "gpu/20261023.md",
+    "weekly/20261030.md",
+    "train/20261030.md",
+    "inference/20261030.md",
+    "gpu/20261030.md"
   ],
   "coverage_counts": {
     "NVIDIA/TransformerEngine": 28,
@@ -510,5 +740,103 @@
     "LMCache/LMCache": 82,
     "ai-dynamo/dynamo": 185,
     "pytorch/pytorch": 350
+  },
+  "schema_version": 1,
+  "issue": "20261030",
+  "timezone": "Asia/Shanghai",
+  "scheduled_at": "2026-10-30T08:00:00+08:00",
+  "window_start": "2026-10-23T08:00:00+08:00",
+  "window_end_exclusive": "2026-10-30T08:00:00+08:00",
+  "verified_at": "2026-10-30T23:23:29+08:00",
+  "coverage_limitations": [
+    "论文、厂商技术博客与 GitHub 检索并非穷尽；未发现可核实新进展的栏目不填充历史内容。",
+    "原版 FlashInfer 逐提交扫描在 600 条后受 API 限流；本次通过定向 PR 检索补充，仍不声称完整扫描全部提交。",
+    "本地未重跑来源中的训练、精度与性能实验；主分支合入不等于正式版本已收录。",
+    "厂商博客发布日期及所列主分支合入日期位于本期窗口；当前网页和 PR 描述可能继续更新，代码细节优先参考固定提交。"
+  ],
+  "publication_date": "2026-10-30",
+  "issue_history": [
+    {
+      "issue": "20261023",
+      "window_start": "2026-10-16T08:00:00+08:00",
+      "window_end_exclusive": "2026-10-23T08:00:00+08:00",
+      "publication_date": "2026-10-27"
+    }
+  ],
+  "current_topic_ids": [
+    "ALTO-MXFP4",
+    "THINKBIT-REASONING",
+    "TE-GROUP-ROW-NVFP4",
+    "TE-MXFP8-ROW-MASTER",
+    "MODELOPT-QAT-CACHE",
+    "MODELOPT-SHARDED-NVFP4",
+    "COMPRESSOR-AUTO-SUBGRAPHS",
+    "QUARK-EAGLE3-TRAINING",
+    "AMD-MI308X-RL",
+    "VLLM-NVFP4-REQUANT",
+    "VLLM-ROCM-FUSED-MXFP8",
+    "SGLANG-ASCEND-BLOCK-FP8",
+    "SGLANG-RDNA-W4A16",
+    "FLASHINFER-QSA-FORMATS",
+    "FLASHINFER-LAUNCH-INIT",
+    "LLAMACPP-OCP-FP8",
+    "TENSORRT-GLOBAL-TUNER",
+    "TRTLLM-MINIMAX-DSPARK",
+    "NVIDIA-SPARK-MOE",
+    "FLASHINFER-RUBIN-MOE",
+    "AMD-WARP-PIPELINING",
+    "TRITON-GFX1250-MX",
+    "AITER-MXFP8-ATTENTION",
+    "AITER-MXFP4-STAGED-TUNER",
+    "LLAMACPP-KV-DPAS",
+    "LLAMACPP-METAL-MXFP4"
+  ],
+  "revision": {
+    "previous_commit": "23f98d9a2002cd451acfe09973d38f3658cbc4a1",
+    "previous_verified_at": "2026-10-30T08:16:04.349049+00:00",
+    "reason": "按重点推荐、简要介绍与原始链接重新编写；扩大厂商博客、硬件平台及框架能力覆盖，正文只显示日期。",
+    "recommendation_count": 26,
+    "original_topic_ids": [
+      "ALTO-MXFP4",
+      "THINKBIT-REASONING",
+      "TE-GROUP-ROW-NVFP4",
+      "TE-MXFP8-ROW-MASTER",
+      "MODELOPT-TP-KL",
+      "LLAMACPP-KV-DPAS",
+      "SGLANG-ASCEND-BLOCK-FP8",
+      "VLLM-NVFP4-REQUANT",
+      "VLLM-NVFP4-SCALE-PADDING",
+      "TRITON-GFX1250-MX"
+    ]
+  },
+  "research_supplement": {
+    "verified_pull_requests": [
+      "https://github.com/flashinfer-ai/flashinfer/pull/6282",
+      "https://github.com/NVIDIA/TensorRT-LLM/pull/20922",
+      "https://github.com/flashinfer-ai/flashinfer/pull/7794",
+      "https://github.com/flashinfer-ai/flashinfer/pull/7027",
+      "https://github.com/sgl-project/sglang/pull/41389",
+      "https://github.com/vllm-project/vllm/pull/63179",
+      "https://github.com/NVIDIA/Model-Optimizer/pull/3099",
+      "https://github.com/vllm-project/llm-compressor/pull/3271",
+      "https://github.com/NVIDIA/Model-Optimizer/pull/2745",
+      "https://github.com/NVIDIA/Model-Optimizer/pull/3034",
+      "https://github.com/ggml-org/llama.cpp/pull/27512",
+      "https://github.com/ggml-org/llama.cpp/pull/31075",
+      "https://github.com/ROCm/aiter/pull/7045",
+      "https://github.com/ROCm/aiter/pull/6461",
+      "https://github.com/sgl-project/sglang/pull/46212",
+      "https://github.com/ggml-org/llama.cpp/pull/31125"
+    ],
+    "official_vendor_blog_count": 5,
+    "research_paper_count": 2,
+    "platforms": [
+      "NVIDIA",
+      "AMD",
+      "Intel",
+      "Apple",
+      "Huawei Ascend"
+    ],
+    "editorial_format": "按厂商与框架分栏目；简要介绍、关键收益或边界、原文链接；不按阅读时长和深浅分级。"
   }
 }
