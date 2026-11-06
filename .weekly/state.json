@@ -656,6 +656,312 @@
       "open_questions": [
         "跟踪正式版本收录、更多模型与硬件上的质量和性能结果；没有实质变化不重复报道。"
       ]
+    },
+    {
+      "topic_id": "20261106-flamia",
+      "category": "train",
+      "framework_or_vendor": "论文与方法推荐",
+      "title": "FLAMIA：兼顾因果安全与前反向一致性的低比特注意力",
+      "status": "paper prototype",
+      "event_date": "2026-11-03",
+      "canonical_sources": [
+        "https://arxiv.org/html/2611.03344v1"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "train/20261106.md#flamia",
+      "core_conclusion": "重点推荐。FLAMIA 提供 Blackwell 上的 MXFP8 与混合 NVFP4/FP8 训练注意力，处理共享缩放因子泄漏未来信息、前反向数值不一致和文档打包问题。MXFP8 是以小块共享缩放因子的八比特浮点格式。作者在 B200/B300 的因果文档打包测试中，将量化、前向和反向一起计时；收益属于注意力调用，不能当作整步训练加速。全四比特路径并非默认，论文测试中也没有更快。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-fp4quant",
+      "category": "train",
+      "framework_or_vendor": "论文与方法推荐",
+      "title": "FP4Quant：把模型并行通信压到四比特",
+      "status": "paper prototype",
+      "event_date": "2026-11-03",
+      "canonical_sources": [
+        "https://arxiv.org/abs/2611.04323v1"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "train/20261106.md#fp4quant",
+      "core_conclusion": "通过微分组双尺度量化、线程束协作打包，以及快速 Walsh–Hadamard 变换分散异常值，降低通信字节数并控制压缩开销。值得关注的是，方案把量化误差和 GPU 打包成本一起考虑。论文在 H100、Qwen-7B 上报告吞吐与质量之间的取舍；这里的 FP4 是通信压缩格式，不能据此推断 H100 原生执行 FP4 矩阵乘，也不能理解为无损训练。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-megatron-parity",
+      "category": "train",
+      "framework_or_vendor": "Megatron-LM",
+      "title": "重点推荐：MXFP8／NVFP4 MoE 的训练前向对齐生成路径",
+      "status": "merged main",
+      "event_date": "2026-11-04",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/Megatron-LM/commit/ebcf9d67221d3fc19bd131ff3e6077d6da6fea0a"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "train/20261106.md#megatron-parity",
+      "core_conclusion": "主分支加入可选的训练前向路径，复用生成端 FlashInfer 专家内核、路由顺序与合并算术，覆盖 MXFP8 和逐 token NVFP4。MoE 是每个 token 只调用部分专家的混合专家模型；这里针对训练与生成数值不同造成的强化学习概率偏差。反向仍由重计算的原训练路径提供，因此不是所有梯度都改成推理内核。实现附一致性测试，尚不能据此宣称长期强化学习收益。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-te-batched",
+      "category": "train",
+      "framework_or_vendor": "Transformer Engine",
+      "title": "BatchedLinear：补齐 BF16／MXFP8 批量矩阵乘",
+      "status": "merged main",
+      "event_date": "2026-11-03",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/TransformerEngine/commit/b021980343e33fdd5b091f95fd13f82e05d581af"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "train/20261106.md#te-batched",
+      "core_conclusion": "新增带步幅的批量 GEMM（矩阵乘）和 PyTorch BatchedLinear，将一组线性计算接入 BF16／MXFP8 路径，并依据张量的批次维推断布局。实现包含布局、量化配方与梯度相关测试，扩展了训练算子覆盖。其他量化格式会回退高精度计算；MXFP8 仍有行数对齐约束。当前依据主分支合入，尚未给出端到端训练测量。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-loopvq",
+      "category": "inference",
+      "framework_or_vendor": "论文与方法推荐",
+      "title": "重点推荐：LoopVQ 利用循环维冗余压缩 KV 缓存",
+      "status": "paper prototype",
+      "event_date": "2026-11-04",
+      "canonical_sources": [
+        "https://arxiv.org/html/2611.05304v1"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "inference/20261106.md#loopvq",
+      "core_conclusion": "LoopVQ 把循环 Transformer 多次循环的键值缓存联合编码，让一个码本索引服务多个循环步骤，并按输出误差优化码本。论文在 Ouro、Huginn 上研究平均每元素 0.5／0.25 比特的表示，并实现 SGLang 原型；这是码本压缩，不是硬件直接计算零点几比特浮点。效率主要在 RTX 6000 Ada 上与 BF16 服务比较，预填充编码会增加开销，且部分近期 token 仍保留 BF16。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-agent-quality",
+      "category": "inference",
+      "framework_or_vendor": "论文与方法推荐",
+      "title": "Beyond Accuracy：量化后的编程代理行为也要看",
+      "status": "paper prototype",
+      "event_date": "2026-11-02",
+      "canonical_sources": [
+        "https://arxiv.org/abs/2611.02368v1"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "inference/20261106.md#agent-quality",
+      "core_conclusion": "研究比较 Qwen2.5-Coder 与 Devstral 的 BF16、四比特 AWQ／GPTQ，在 OJBench 上观察多轮编程与工具调用。作者未检测到显著的最终准确率下降，但一次解题成功与依赖反复执行纠错的比例会变化。它提醒读者，单一正确率不足以评估量化代理的交互成本；结论限定于这些模型、任务和三个随机种子，不代表所有代理无精度损失。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-vllm-cache",
+      "category": "inference",
+      "framework_or_vendor": "vLLM",
+      "title": "Kimi K3.1 Pro：低比特潜在缓存与索引缓存协同",
+      "status": "official mechanism article",
+      "event_date": "2026-11-04",
+      "canonical_sources": [
+        "https://vllm.ai/blog/2026-11-04-kimi-k31-pro"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "inference/20261106.md#vllm-cache",
+      "core_conclusion": "官方新博客说明，注意力的潜在键值缓存可选 NVFP4，稀疏索引键可独立选 MXFP4，压缩布局可用于预填充与解码分离传输。值得关注的是，容量优化覆盖两类缓存，而不只压缩模型权重；上下文并行还可按 token 分摊缓存。不同配置分别适用于文中列出的 NVIDIA 与 AMD 后端，不能把一种组合的收益套给全部设备。本文是新支持与机制介绍，完整服务收益仍依赖上下文、并发及通信开销。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-vllm-rotation",
+      "category": "inference",
+      "framework_or_vendor": "vLLM",
+      "title": "MXFP4 输入旋转与 Quark 导出模型接通",
+      "status": "merged main",
+      "event_date": "2026-11-04",
+      "canonical_sources": [
+        "https://github.com/vllm-project/vllm/pull/62750"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "inference/20261106.md#vllm-rotation",
+      "core_conclusion": "主分支合入按块 Hadamard 正交旋转的线性层包装器，支持在线 MXFP4 量化及已带旋转信息的 Quark checkpoint。权重和输入采用配套变换，将异常值分散到块内，减少低比特量化误差。实现核查旋转矩阵并避免重复旋转权重，测试覆盖实际 AITER 与模拟路径；这是需要选择的线性层路径，不能把同周尚在草案中的 MoE 扩展算作已完成。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-sglang-engram",
+      "category": "inference",
+      "framework_or_vendor": "SGLang",
+      "title": "Engram 查表保留 MXFP4 打包，减少主机内存",
+      "status": "merged main",
+      "event_date": "2026-11-04",
+      "canonical_sources": [
+        "https://github.com/sgl-project/sglang/pull/47935"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "inference/20261106.md#sglang-engram",
+      "core_conclusion": "DeepSeek-V4.1 的 Engram 表加载后保持四比特打包，查表时再解码，避免提前扩成 FP8。作者在 GB300、四路张量并行且表驻留 CPU 的配置中，将整节点两张表的主机内存从约 189 GiB 降至 97 GiB；该配置的 GPU 显存没有下降。测试覆盖全部字节编码和负零，并与扩宽后的查表结果逐位比较。主分支已合入，小批量主机查表可能略慢，不能写成全面提速。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-llamacpp-release",
+      "category": "inference",
+      "framework_or_vendor": "llama.cpp",
+      "title": "v0.9.0：OCP FP8 E4M3 进入正式版本",
+      "status": "official release",
+      "event_date": "2026-11-04",
+      "canonical_sources": [
+        "https://github.com/ggml-org/llama.cpp/releases/tag/v0.9.0"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "inference/20261106.md#llamacpp-release",
+      "core_conclusion": "上期跟踪的 OCP FP8 E4M3 基础格式本周进入 v0.9.0 正式发布，并随 ggml v0.29.0 提供相应格式支持。新增证据是发布状态变化，格式本身不是本周首次提出。八比特浮点的文件表示、转换能力与各后端原生执行是不同层次；发布说明不足以证明每个平台都获得端到端加速。对需要稳定版本入口的读者，这比追逐单个主分支提交更方便。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-autoround",
+      "category": "inference",
+      "framework_or_vendor": "AutoRound",
+      "title": "张量并行与低秩适配扩展量化调优路径",
+      "status": "merged main",
+      "event_date": "2026-11-05",
+      "canonical_sources": [
+        "https://github.com/intel/auto-round/commit/5db1082901dfba6e710f46e11bcc00cad30a5af3"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "inference/20261106.md#autoround",
+      "core_conclusion": "主分支加入张量并行配置与 LoRA 低秩参数支持，并调整 FP4 混合专家模型的调优实现。值得关注的是，量化工具开始同时处理多设备分摊和低秩优化参数，以扩大可调优模型范围。实现包含低秩缩放、参数校验等测试；这是涉及较多重构的合入，不等于已随稳定版发布，也没有足够统一条件支持通用加速倍数。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-nvfp4plus",
+      "category": "gpu",
+      "framework_or_vendor": "NVIDIA / Rubin",
+      "title": "重点推荐：TensorRT-LLM 接入 NVFP4_PLUS MoE",
+      "status": "merged main",
+      "event_date": "2026-11-04",
+      "canonical_sources": [
+        "https://github.com/NVIDIA/TensorRT-LLM/commit/63468e65433004f8385b1c2975259b950eec633d"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "gpu/20261106.md#nvfp4plus",
+      "core_conclusion": "新路径使用 E2M1 四比特值，每 32 个值配一个 UE5M3 缩放因子，取消 FP32 全局缩放。MXFP4 checkpoint 的数据值保持不变，将原缩放转换为相同二次幂的表示，激活再量化到目标格式，使两次专家矩阵乘均走 FP4。当前限定 Rubin SM107、显式选择的 CuTe DSL 后端及无偏置 SwiGLU 专家，并有维度对齐要求；已合入主分支，尚未给出端到端测量。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-amd-kimi",
+      "category": "gpu",
+      "framework_or_vendor": "AMD Instinct",
+      "title": "Kimi K3.1 Pro 官方技术文章：原生 FP4 索引计算",
+      "status": "official mechanism article",
+      "event_date": "2026-11-04",
+      "canonical_sources": [
+        "https://www.amd.com/en/developer/resources/technical-articles/2026/kimi-k3-1-pro-on-amd-instinct-gpus.html"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "gpu/20261106.md#amd-kimi",
+      "core_conclusion": "AMD 新文章解释 MI355X 上 ATOM 与 vLLM 的低比特实现。MXFP4 索引键将每项含缩放的存储从 FP8 的 132 字节降到 68 字节，评分使用原生 FP4 矩阵指令，累加与跨头加权归约仍为 FP32；这同时改变存储与计算。文章也介绍专家计算、FP8 激活和上下文并行的配合。测量属于作者给定配置，不能把多项优化合计收益归给量化一项。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-aiter-kv",
+      "category": "gpu",
+      "framework_or_vendor": "AMD Instinct",
+      "title": "AITER：MXFP4 分页 KV 解码接入共享注意力内核",
+      "status": "merged main",
+      "event_date": "2026-11-04",
+      "canonical_sources": [
+        "https://github.com/ROCm/aiter/commit/5469555096de4b7ede0ea6a0cb2d1dd40138fb09"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "gpu/20261106.md#aiter-kv",
+      "core_conclusion": "新增 gfx950、单查询 token 的分页注意力解码路径，读取 E2M1 数据与每 32 元素一个 E8M0 缩放。FP8 查询路径的 QK 使用混合 FP4×FP8 矩阵指令，而 V 会还原为 BF16 后参与 PV；因此不是整个注意力都以 FP4 计算。实现附分页步幅、尾部垃圾值、空上下文等测试。当前是主分支底层能力，模型质量和服务吞吐不能从局部误差测试直接推出。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-aiter-mxfp8",
+      "category": "gpu",
+      "framework_or_vendor": "AMD Instinct",
+      "title": "AITER：CDNA4 增加 MXFP8 注意力前向与反向",
+      "status": "merged main",
+      "event_date": "2026-11-03",
+      "canonical_sources": [
+        "https://github.com/ROCm/aiter/commit/bc12ddf440f9401b2eb9fb2f01930ce05d2d39df"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "gpu/20261106.md#aiter-mxfp8",
+      "core_conclusion": "新增面向 gfx950／CDNA4 的 MXFP8 Flash Attention v2 实现，提供前向、反向及携带块缩放的 Python 接口。它扩展低比特训练可用的注意力算子，与上期 gfx1250 路线的新增支持属于不同目标平台。当前依据主分支源码与对应配置核验，不能推断所有 AMD GPU 通用，也没有足够端到端训练数据支持统一速度或收敛结论。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-mori",
+      "category": "gpu",
+      "framework_or_vendor": "AMD Instinct",
+      "title": "MoRI：将 all-gather 与消费数据的 FP8 GEMM 融合",
+      "status": "merged main",
+      "event_date": "2026-11-04",
+      "canonical_sources": [
+        "https://github.com/ROCm/mori/commit/e7c16edafedd9f58718b5cce3b7ec398c55bd776"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "gpu/20261106.md#mori",
+      "core_conclusion": "新增融合算子把各设备的 token 聚合与后续 FP8 矩阵乘衔接起来，本地块先算，远端数据分块到达后再消费，缩放因子随数据一起传输。all-gather 即让每张卡获得各卡分片的集合通信。作者在八张 MI355X 的指定投影形状上验证通信与计算重叠；这属于融合算子测量，不是整模型加速。当前接口限定节点内通信及所需 SDMA 队列，并需可选 FlyDSL 依赖。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-ryzen",
+      "category": "gpu",
+      "framework_or_vendor": "AMD Ryzen AI",
+      "title": "INT4 基座配动态 LoRA：一个 NPU 模型服务多个适配器",
+      "status": "official mechanism article",
+      "event_date": "2026-11-02",
+      "canonical_sources": [
+        "https://www.amd.com/en/developer/resources/technical-articles/2026/dynamic-lora-on-amd-ryzen-ai.html"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "gpu/20261106.md#ryzen",
+      "core_conclusion": "官方新博客介绍 Ryzen AI 1.9 的动态 LoRA 流程：以 Quark 将基座量化为 INT4 AWQ，针对冻结基座训练并保留独立适配器，编译后运行时切换。LoRA 是用少量低秩参数适配任务的方法；这里减少为每个任务保留完整合并模型的需要。属于新增机制解读，平台限定 Ryzen AI NPU；文中任务精度结果不能证明所有适配器或模型都可直接通用。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
+    },
+    {
+      "topic_id": "20261106-intel-grouped",
+      "category": "gpu",
+      "framework_or_vendor": "Intel XPU",
+      "title": "PyTorch 接入 oneDNN 分组低比特矩阵乘底层",
+      "status": "merged main",
+      "event_date": "2026-11-06",
+      "canonical_sources": [
+        "https://github.com/pytorch/pytorch/commit/77b184a94e545b62e43ea6945f808a86d7518ab4"
+      ],
+      "last_verified_at": "2026-11-06T12:14:58.226838+08:00",
+      "last_reported_at": "gpu/20261106.md#intel-grouped",
+      "core_conclusion": "主分支合入 Intel XPU 分组矩阵乘的 oneDNN 集成部分，面向 FP8、MXFP8、MXFP4 和 NVFP4 等类型。分组矩阵乘可把多个矩阵任务统一提交，是混合专家模型的重要底层能力。此项明确是分阶段接入的第一部分，依赖 oneDNN 版本及后续接口工作，不能写成这些格式已经在全部 XPU 上端到端可用；尚未提供整模型测量。",
+      "open_questions": [
+        "Follow stable release and end-to-end quality/performance evidence; do not repeat without changes."
+      ]
     }
   ],
   "watchlist": [
@@ -742,73 +1048,81 @@
     "pytorch/pytorch": 350
   },
   "schema_version": 1,
-  "issue": "20261030",
+  "issue": "20261106",
   "timezone": "Asia/Shanghai",
-  "scheduled_at": "2026-10-30T08:00:00+08:00",
-  "window_start": "2026-10-23T08:00:00+08:00",
-  "window_end_exclusive": "2026-10-30T08:00:00+08:00",
-  "verified_at": "2026-10-30T23:23:29+08:00",
+  "scheduled_at": "2026-11-06T08:00:00+08:00",
+  "window_start": "2026-10-30T08:00:00+08:00",
+  "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+  "verified_at": "2026-11-06T12:14:58.226838+08:00",
   "coverage_limitations": [
-    "论文、厂商技术博客与 GitHub 检索并非穷尽；未发现可核实新进展的栏目不填充历史内容。",
-    "原版 FlashInfer 逐提交扫描在 600 条后受 API 限流；本次通过定向 PR 检索补充，仍不声称完整扫描全部提交。",
-    "本地未重跑来源中的训练、精度与性能实验；主分支合入不等于正式版本已收录。",
-    "厂商博客发布日期及所列主分支合入日期位于本期窗口；当前网页和 PR 描述可能继续更新，代码细节优先参考固定提交。"
+    "High-volume repo commit first pages not exhaustive; release/search/direct diff supplementation performed.",
+    "Some release pages returned stale cached content; not treated as no updates.",
+    "Huawei official CANN/technical search yielded no verified in-window recommendation, not proof of no changes."
   ],
-  "publication_date": "2026-10-30",
+  "publication_date": "2026-11-06",
   "issue_history": [
     {
       "issue": "20261023",
       "window_start": "2026-10-16T08:00:00+08:00",
       "window_end_exclusive": "2026-10-23T08:00:00+08:00",
       "publication_date": "2026-10-27"
+    },
+    {
+      "issue": "20261030",
+      "window_start": "2026-10-23T08:00:00+08:00",
+      "window_end_exclusive": "2026-10-30T08:00:00+08:00",
+      "publication_date": "2026-10-30",
+      "current_topic_ids": [
+        "ALTO-MXFP4",
+        "THINKBIT-REASONING",
+        "TE-GROUP-ROW-NVFP4",
+        "TE-MXFP8-ROW-MASTER",
+        "MODELOPT-QAT-CACHE",
+        "MODELOPT-SHARDED-NVFP4",
+        "COMPRESSOR-AUTO-SUBGRAPHS",
+        "QUARK-EAGLE3-TRAINING",
+        "AMD-MI308X-RL",
+        "VLLM-NVFP4-REQUANT",
+        "VLLM-ROCM-FUSED-MXFP8",
+        "SGLANG-ASCEND-BLOCK-FP8",
+        "SGLANG-RDNA-W4A16",
+        "FLASHINFER-QSA-FORMATS",
+        "FLASHINFER-LAUNCH-INIT",
+        "LLAMACPP-OCP-FP8",
+        "TENSORRT-GLOBAL-TUNER",
+        "TRTLLM-MINIMAX-DSPARK",
+        "NVIDIA-SPARK-MOE",
+        "FLASHINFER-RUBIN-MOE",
+        "AMD-WARP-PIPELINING",
+        "TRITON-GFX1250-MX",
+        "AITER-MXFP8-ATTENTION",
+        "AITER-MXFP4-STAGED-TUNER",
+        "LLAMACPP-KV-DPAS",
+        "LLAMACPP-METAL-MXFP4"
+      ]
     }
   ],
   "current_topic_ids": [
-    "ALTO-MXFP4",
-    "THINKBIT-REASONING",
-    "TE-GROUP-ROW-NVFP4",
-    "TE-MXFP8-ROW-MASTER",
-    "MODELOPT-QAT-CACHE",
-    "MODELOPT-SHARDED-NVFP4",
-    "COMPRESSOR-AUTO-SUBGRAPHS",
-    "QUARK-EAGLE3-TRAINING",
-    "AMD-MI308X-RL",
-    "VLLM-NVFP4-REQUANT",
-    "VLLM-ROCM-FUSED-MXFP8",
-    "SGLANG-ASCEND-BLOCK-FP8",
-    "SGLANG-RDNA-W4A16",
-    "FLASHINFER-QSA-FORMATS",
-    "FLASHINFER-LAUNCH-INIT",
-    "LLAMACPP-OCP-FP8",
-    "TENSORRT-GLOBAL-TUNER",
-    "TRTLLM-MINIMAX-DSPARK",
-    "NVIDIA-SPARK-MOE",
-    "FLASHINFER-RUBIN-MOE",
-    "AMD-WARP-PIPELINING",
-    "TRITON-GFX1250-MX",
-    "AITER-MXFP8-ATTENTION",
-    "AITER-MXFP4-STAGED-TUNER",
-    "LLAMACPP-KV-DPAS",
-    "LLAMACPP-METAL-MXFP4"
+    "20261106-flamia",
+    "20261106-fp4quant",
+    "20261106-megatron-parity",
+    "20261106-te-batched",
+    "20261106-loopvq",
+    "20261106-agent-quality",
+    "20261106-vllm-cache",
+    "20261106-vllm-rotation",
+    "20261106-sglang-engram",
+    "20261106-llamacpp-release",
+    "20261106-autoround",
+    "20261106-nvfp4plus",
+    "20261106-amd-kimi",
+    "20261106-aiter-kv",
+    "20261106-aiter-mxfp8",
+    "20261106-mori",
+    "20261106-ryzen",
+    "20261106-intel-grouped"
   ],
-  "revision": {
-    "previous_commit": "23f98d9a2002cd451acfe09973d38f3658cbc4a1",
-    "previous_verified_at": "2026-10-30T08:16:04.349049+00:00",
-    "reason": "按重点推荐、简要介绍与原始链接重新编写；扩大厂商博客、硬件平台及框架能力覆盖，正文只显示日期。",
-    "recommendation_count": 26,
-    "original_topic_ids": [
-      "ALTO-MXFP4",
-      "THINKBIT-REASONING",
-      "TE-GROUP-ROW-NVFP4",
-      "TE-MXFP8-ROW-MASTER",
-      "MODELOPT-TP-KL",
-      "LLAMACPP-KV-DPAS",
-      "SGLANG-ASCEND-BLOCK-FP8",
-      "VLLM-NVFP4-REQUANT",
-      "VLLM-NVFP4-SCALE-PADDING",
-      "TRITON-GFX1250-MX"
-    ]
-  },
+  "revision": "initial",
   "research_supplement": {
     "verified_pull_requests": [
       "https://github.com/flashinfer-ai/flashinfer/pull/6282",
@@ -838,5 +1152,916 @@
       "Huawei Ascend"
     ],
     "editorial_format": "按厂商与框架分栏目；简要介绍、关键收益或边界、原文链接；不按阅读时长和深浅分级。"
+  },
+  "coverage_records_20261106": [
+    {
+      "name": "NVIDIA/TransformerEngine",
+      "source_entry": "https://api.github.com/repos/NVIDIA/TransformerEngine/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "有入选项",
+      "scope": "default branch commits within window",
+      "count": 25,
+      "error": null
+    },
+    {
+      "name": "NVIDIA/Megatron-LM",
+      "source_entry": "https://api.github.com/repos/NVIDIA/Megatron-LM/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "有入选项",
+      "scope": "default branch commits within window",
+      "count": 70,
+      "error": null
+    },
+    {
+      "name": "microsoft/DeepSpeed",
+      "source_entry": "https://api.github.com/repos/microsoft/DeepSpeed/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 26,
+      "error": null
+    },
+    {
+      "name": "pytorch/pytorch",
+      "source_entry": "https://api.github.com/repos/pytorch/pytorch/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "有入选项",
+      "scope": "default branch commits, first page only",
+      "count": 100,
+      "error": null
+    },
+    {
+      "name": "pytorch/ao",
+      "source_entry": "https://api.github.com/repos/pytorch/ao/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 9,
+      "error": null
+    },
+    {
+      "name": "NVIDIA/Model-Optimizer",
+      "source_entry": "https://api.github.com/repos/NVIDIA/Model-Optimizer/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 71,
+      "error": null
+    },
+    {
+      "name": "vllm-project/llm-compressor",
+      "source_entry": "https://api.github.com/repos/vllm-project/llm-compressor/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 18,
+      "error": null
+    },
+    {
+      "name": "intel/auto-round",
+      "source_entry": "https://api.github.com/repos/intel/auto-round/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "有入选项",
+      "scope": "default branch commits within window",
+      "count": 15,
+      "error": null
+    },
+    {
+      "name": "NVIDIA/TensorRT-LLM",
+      "source_entry": "https://api.github.com/repos/NVIDIA/TensorRT-LLM/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "有入选项",
+      "scope": "default branch commits, first page only",
+      "count": 100,
+      "error": null
+    },
+    {
+      "name": "deepseek-ai/DeepInfer",
+      "source_entry": "https://api.github.com/repos/deepseek-ai/DeepInfer/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 1,
+      "error": null
+    },
+    {
+      "name": "flashinfer-ai/flashinfer",
+      "source_entry": "https://api.github.com/repos/flashinfer-ai/flashinfer/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits, first page only",
+      "count": 100,
+      "error": null
+    },
+    {
+      "name": "Dao-AILab/flash-attention",
+      "source_entry": "https://api.github.com/repos/Dao-AILab/flash-attention/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 13,
+      "error": null
+    },
+    {
+      "name": "deepseek-ai/DeepGEMM",
+      "source_entry": "https://api.github.com/repos/deepseek-ai/DeepGEMM/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 0,
+      "error": null
+    },
+    {
+      "name": "IST-DASLab/marlin",
+      "source_entry": "https://api.github.com/repos/IST-DASLab/marlin/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 0,
+      "error": null
+    },
+    {
+      "name": "triton-lang/triton",
+      "source_entry": "https://api.github.com/repos/triton-lang/triton/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 45,
+      "error": null
+    },
+    {
+      "name": "NVIDIA/cutlass",
+      "source_entry": "https://api.github.com/repos/NVIDIA/cutlass/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 2,
+      "error": null
+    },
+    {
+      "name": "ROCm/aiter",
+      "source_entry": "https://api.github.com/repos/ROCm/aiter/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "有入选项",
+      "scope": "default branch commits, first page only",
+      "count": 100,
+      "error": null
+    },
+    {
+      "name": "deepseek-ai/DeepEP",
+      "source_entry": "https://api.github.com/repos/deepseek-ai/DeepEP/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 0,
+      "error": null
+    },
+    {
+      "name": "NVIDIA/nccl",
+      "source_entry": "https://api.github.com/repos/NVIDIA/nccl/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 0,
+      "error": null
+    },
+    {
+      "name": "ROCm/mori",
+      "source_entry": "https://api.github.com/repos/ROCm/mori/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "有入选项",
+      "scope": "default branch commits within window",
+      "count": 31,
+      "error": null
+    },
+    {
+      "name": "LMCache/LMCache",
+      "source_entry": "https://api.github.com/repos/LMCache/LMCache/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits within window",
+      "count": 81,
+      "error": null
+    },
+    {
+      "name": "ai-dynamo/dynamo",
+      "source_entry": "https://api.github.com/repos/ai-dynamo/dynamo/commits?since=2026-10-30T00:00:00Z&until=2026-11-06T00:00:00Z&per_page=100",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "本次抽样未核实到重要新增",
+      "scope": "default branch commits, first page only",
+      "count": 100,
+      "error": null
+    },
+    {
+      "name": "硬件data",
+      "source_entry": "Parallel official-source directed search",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "候选检索，逐条核验后入选",
+      "sources": [
+        {
+          "url": "https://rocm.blogs.amd.com/",
+          "title": "AMD ROCm™ Blogs",
+          "date": null
+        },
+        {
+          "url": "https://www.amd.com/en/developer/resources/technical-articles/2026/kimi-k3-1-pro-on-amd-instinct-gpus.html",
+          "title": "Kimi K3.1 Pro on AMD Instinct GPUs",
+          "date": "2026-11-04"
+        },
+        {
+          "url": "https://nvidia.github.io/TensorRT-Edge-LLM/cpp_api/kernels/fp4Quantize.html",
+          "title": "Fp4 Quantize — TensorRT Edge-LLM",
+          "date": null
+        },
+        {
+          "url": "https://developer.nvidia.com/blog/3-ways-to-boost-moe-inference-on-nvidia-dgx-spark/",
+          "title": "3 Ways to Boost MoE Inference on NVIDIA DGX Spark | NVIDIA Technical Blog",
+          "date": "2026-10-27"
+        },
+        {
+          "url": "https://nvidia.github.io/TensorRT-LLM/latest/blogs/tech_blog/blog03_Optimizing_DeepSeek_R1_Throughput_on_NVIDIA_Blackwell_GPUs.html",
+          "title": "Optimizing DeepSeek R1 Throughput on NVIDIA Blackwell GPUs: A Deep Dive for Developers — TensorRT LLM",
+          "date": null
+        },
+        {
+          "url": "https://forums.developer.nvidia.com/t/native-vllm-for-rtx-spark-on-windows-arm64-w-qwen3-8-flash-next-fp4-local/387069",
+          "title": "Native vLLM for RTX Spark on Windows ARM64 (w/Qwen3.8-Flash-Next-FP4-Local) - Accelerated Computing / RTX Spark (NEW) - NVIDIA Developer Forums",
+          "date": "2026-10-27"
+        },
+        {
+          "url": "https://rocm.docs.amd.com/en/latest/about/release-notes.html",
+          "title": "ROCm Core SDK 10.1.0 release notes",
+          "date": null
+        },
+        {
+          "url": "https://www.intel.com/content/www/us/en/developer/articles/release-notes/oneapi-toolkit/2026.html",
+          "title": "Intel® oneAPI Toolkit Release Notes and System Requirements",
+          "date": "2026-10-22"
+        },
+        {
+          "url": "https://www.siliconreport.com/nvidia-cuts-vera-rubin-hbm4-bandwidth-by-about-13",
+          "title": "Nvidia cuts Vera Rubin HBM4 bandwidth by about 13% | SiliconReport",
+          "date": "2026-11-01"
+        },
+        {
+          "url": "https://www.hiascend.com/cann",
+          "title": "CANN-昇腾异构计算架构-昇腾社区",
+          "date": null
+        }
+      ]
+    },
+    {
+      "name": "软件data",
+      "source_entry": "Parallel official-source directed search",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "候选检索，逐条核验后入选",
+      "sources": [
+        {
+          "url": "https://github.com/vllm-project/vllm/commits/main?since=2026-10-31T13:40:28Z",
+          "title": "Commits · vllm-project/vllm · GitHub",
+          "date": "2026-10-31"
+        },
+        {
+          "url": "https://github.com/sgl-project/sglang/issues/47501",
+          "title": "[Bug] Qwen3.8-Flash-Next-FP8 TP4/EP4 decode ~5% slower on GB200 since #45917 (FP8 TRT-LLM MoE leaves in-kernel routing under EP) · Issue #47501 · sgl-project/sglang · GitHub",
+          "date": "2026-10-30"
+        },
+        {
+          "url": "https://docs.nvidia.com/deeplearning/frameworks/pdf/SGLang-Release-Notes.pdf",
+          "title": "SGLang - NVIDIA Documentation Hub",
+          "date": "2026-10-30"
+        },
+        {
+          "url": "https://github.com/vllm-project/vllm/commits/main/",
+          "title": "Commits · vllm-project/vllm · GitHub",
+          "date": null
+        },
+        {
+          "url": "https://github.com/vllm-project/vllm/commits/main?since=2026-11-03T02%3A00%3A00Z&until=2026-11-04T02%3A00%3A00Z",
+          "title": "Commits · vllm-project/vllm · GitHub",
+          "date": "2026-11-03"
+        },
+        {
+          "url": "https://theagenticweekly.com/news/llama-cpp-v0-9-0-fp8-mistral-large-4",
+          "title": "llama.cpp v0.9.0: FP8 and Mistral Large 4 | Agentic Weekly",
+          "date": "2026-11-04"
+        },
+        {
+          "url": "https://machinenotes.com/releases",
+          "title": "New releases of AI tools and SDKs | Machine Notes",
+          "date": null
+        },
+        {
+          "url": "https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes/rel-26-02.html",
+          "title": "PyTorch Release 26.02 - NVIDIA Docs",
+          "date": "2026-10-30"
+        },
+        {
+          "url": "https://github.com/vllm-project/vllm/commits/main?since=2026-11-02T02%3A00%3A00Z&until=2026-11-03T02%3A00%3A00Z",
+          "title": "Commits · vllm-project/vllm · GitHub",
+          "date": "2026-11-02"
+        },
+        {
+          "url": "https://github.com/NVIDIA/Megatron-LM/issues/8811",
+          "title": "Megatron-LM Monthly Activity Report — October 2026 · Issue #8811 · NVIDIA/Megatron-LM · GitHub",
+          "date": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "name": "论文data",
+      "source_entry": "Parallel official-source directed search",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "候选检索，逐条核验后入选",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2610.39853",
+          "title": "[2610.39853] KV Cache Quantization for Diffusion Language Models",
+          "date": "2026-10-29"
+        },
+        {
+          "url": "https://arxiv.org/abs/2611.05304",
+          "title": "[2611.05304] LoopVQ: Sub 1-bit KV Cache Quantization for Looped Transformers",
+          "date": "2026-11-03"
+        },
+        {
+          "url": "https://arxiv.org/abs/2611.04323",
+          "title": "[2611.04323] FP4Quant: Efficient 4-Bit Communication Compression for Model-Parallel LLM Training",
+          "date": "2026-11-03"
+        },
+        {
+          "url": "https://arxiv.org/abs/2610.07457",
+          "title": "[2610.07457] AlignQuant: Tile-Aligned Mixed-Precision Quantization for Efficient LLM Generation",
+          "date": "2026-10-05"
+        },
+        {
+          "url": "https://arxiv.org/abs/2610.07767",
+          "title": "[2610.07767] TRACE: Rollout-Guided Quantization-Aware Training for FP4 Reinforcement Learning of MoE Language Models",
+          "date": "2026-10-06"
+        },
+        {
+          "url": "https://arxiv.org/abs/2611.03344",
+          "title": "[2611.03344] FLAMIA: FLAsh MIcroscaling Attention for Fast and Causally Safe Training on Blackwell",
+          "date": "2026-11-02"
+        },
+        {
+          "url": "https://arxiv.org/abs/2611.04380",
+          "title": "[2611.04380] Twice as Fast, Until It Isn't: Quantized Serving of Mid-Size Open LLMs",
+          "date": "2026-11-03"
+        },
+        {
+          "url": "https://arxiv.org/abs/2610.07121",
+          "title": "[2610.07121] SoloQ: Calibration-Free Quantization for Diffusion Language Models",
+          "date": "2026-10-05"
+        },
+        {
+          "url": "https://arxiv.org/abs/2611.02368",
+          "title": "[2611.02368] Beyond Accuracy: How Quantization Affects Coding Agents",
+          "date": "2026-11-02"
+        },
+        {
+          "url": "https://arxiv.org/abs/2610.05977",
+          "title": "[2610.05977] StagQ: Constraint-Driven Multi-Precision Weight Quantization for LLMs",
+          "date": "2026-10-05"
+        }
+      ]
+    },
+    {
+      "name": "trainstack",
+      "source_entry": "Parallel official-source directed search",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "候选检索，逐条核验后入选",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2611.04323",
+          "title": "[2611.04323] FP4Quant: Efficient 4-Bit Communication Compression for Model-Parallel LLM Training",
+          "date": "2026-11-03"
+        },
+        {
+          "url": "https://arxiv.org/abs/2611.04323v1",
+          "title": "[2611.04323v1] FP4Quant: Efficient 4-Bit Communication Compression for Model-Parallel LLM Training",
+          "date": "2026-11-03"
+        },
+        {
+          "url": "https://github.com/NVIDIA/Megatron-LM/issues/8829",
+          "title": "Megatron-LM Monthly Activity Report — November 2026 (through November 1, 2026) · Issue #8829 · NVIDIA/Megatron-LM · GitHub",
+          "date": "2026-11-02"
+        },
+        {
+          "url": "https://qian.cx/posts/F32DA24E-C64C-4688-B44F-FA5379289E29",
+          "title": "bf16 权重更新被冻结?探究低精度数值对模型微调的隐藏影响\n",
+          "date": "2026-11-05"
+        },
+        {
+          "url": "https://github.com/NVIDIA/Megatron-LM/issues/8811",
+          "title": "Megatron-LM Monthly Activity Report — October 2026 · Issue #8811 · NVIDIA/Megatron-LM · GitHub",
+          "date": "2026-11-01"
+        },
+        {
+          "url": "https://github.com/NVIDIA/Megatron-LM/issues/7882",
+          "title": "Megatron-LM Monthly Activity Report — October 2026 (through October 11, 2026) · Issue #7882 · NVIDIA/Megatron-LM · GitHub",
+          "date": "2026-10-05"
+        },
+        {
+          "url": "https://frontiernow.dev/en/news/category/model-releases",
+          "title": "Models — News Category — Frontier Now",
+          "date": null
+        },
+        {
+          "url": "https://pypi.org/project/megatron-bridge",
+          "title": "megatron-bridge · PyPI",
+          "date": "2026-10-30"
+        },
+        {
+          "url": "http://docs.axolotl.ai/docs/expert_quantization.html",
+          "title": "MoE Expert Quantization – Axolotl",
+          "date": null
+        },
+        {
+          "url": "https://github.com/NVIDIA/Megatron-LM/commits",
+          "title": "Commits · NVIDIA/Megatron-LM · GitHub",
+          "date": null
+        }
+      ]
+    },
+    {
+      "name": "inferstack",
+      "source_entry": "Parallel official-source directed search",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "候选检索，逐条核验后入选",
+      "sources": [
+        {
+          "url": "https://docs.nvidia.com/deeplearning/frameworks/pdf/SGLang-Release-Notes.pdf",
+          "title": "SGLang - NVIDIA Documentation Hub",
+          "date": "2026-10-30"
+        },
+        {
+          "url": "https://theagenticweekly.com/news/llama-cpp-v0-9-0-fp8-mistral-large-4",
+          "title": "llama.cpp v0.9.0: FP8 and Mistral Large 4 | Agentic Weekly",
+          "date": "2026-11-04"
+        },
+        {
+          "url": "https://github.com/vllm-project/vllm/commits/main?since=2026-10-31T13:40:28Z",
+          "title": "Commits · vllm-project/vllm · GitHub",
+          "date": "2026-10-31"
+        },
+        {
+          "url": "https://github.com/vllm-project/vllm/commits/main?since=2026-11-03T02%3A00%3A00Z&until=2026-11-04T02%3A00%3A00Z",
+          "title": "Commits · vllm-project/vllm · GitHub",
+          "date": "2026-11-03"
+        },
+        {
+          "url": "https://github.com/sgl-project/sglang/commits/main?since=2026-11-03T02%3A00%3A00Z&until=2026-11-04T02%3A00%3A00Z",
+          "title": "Commits · sgl-project/sglang · GitHub",
+          "date": "2026-11-03"
+        },
+        {
+          "url": "https://github.com/sgl-project/sglang/commits/main?since=2026-11-01T00%3A00%3A00Z&until=2026-11-02T02%3A00%3A00Z",
+          "title": "Commits · sgl-project/sglang · GitHub",
+          "date": "2026-11-01"
+        },
+        {
+          "url": "https://github.com/vllm-project/vllm/commits/main/",
+          "title": "Commits · vllm-project/vllm · GitHub",
+          "date": null
+        },
+        {
+          "url": "https://vllm.ai/blog/rss.xml",
+          "title": "vLLM Blog",
+          "date": null
+        },
+        {
+          "url": "https://github.com/vllm-project/vllm/commits/main?since=2026-11-01T00%3A00%3A00Z&until=2026-11-02T02%3A00%3A00Z",
+          "title": "Commits · vllm-project/vllm · GitHub",
+          "date": "2026-11-01"
+        },
+        {
+          "url": "https://k20x.com/ai_setup/daily",
+          "title": "Local AI Runtimes Expand Model Support, Quantization Explored, and Agent Sandboxes Enhanced | Local AI & E2B Daily Brief 2026-11-03 | K/20X LABS",
+          "date": "2026-10-28"
+        }
+      ]
+    },
+    {
+      "name": "kernels",
+      "source_entry": "Parallel official-source directed search",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "候选检索，逐条核验后入选",
+      "sources": [
+        {
+          "url": "https://github.com/flashinfer-ai/flashinfer/releases",
+          "title": "Releases · flashinfer-ai/flashinfer · GitHub",
+          "date": null
+        },
+        {
+          "url": "https://flashinfer.ai/releases/",
+          "title": "Release Highlights | FlashInfer",
+          "date": "2026-10-15"
+        },
+        {
+          "url": "https://github.com/vllm-project/vllm/issues/64632",
+          "title": "[Tracking] Muse Spark Open Improvement · Issue #64632 · vllm-project/vllm · GitHub",
+          "date": "2026-10-30"
+        },
+        {
+          "url": "https://github.com/local-inference-lab/rtx6kpro/blob/master/daily-summaries/2026-10/2026-10-28.md",
+          "title": "rtx6kpro/daily-summaries/2026-10/2026-10-28.md at master · local-inference-lab/rtx6kpro · GitHub",
+          "date": "2026-10-28"
+        },
+        {
+          "url": "https://github.com/Dao-AILab/flash-attention/issues",
+          "title": "Issues · Dao-AILab/flash-attention · GitHub",
+          "date": "2026-11-05"
+        },
+        {
+          "url": "https://github.com/flashinfer-ai/flashinfer/releases/tag/v0.7.2",
+          "title": "Release Release v0.7.2 · flashinfer-ai/flashinfer · GitHub",
+          "date": null
+        },
+        {
+          "url": "https://github.com/flashinfer-ai/flashinfer/pulls?q=is%3Apr+author%3Ayyihuang+created%3A2026-09-07..2026-10-05",
+          "title": "Pull requests · flashinfer-ai/flashinfer · GitHub",
+          "date": "2026-09-07"
+        },
+        {
+          "url": "https://github.com/vllm-project/vllm/commits/main?since=2026-11-02T02%3A00%3A00Z&until=2026-11-03T02%3A00%3A00Z",
+          "title": "Commits · vllm-project/vllm · GitHub",
+          "date": "2026-11-02"
+        },
+        {
+          "url": "https://github.com/flashinfer-ai/flashinfer/pulls?q=is:pr%20is:merged%20merged:2026-09-07..2026-10-05&page=1",
+          "title": "Pull requests · flashinfer-ai/flashinfer · GitHub",
+          "date": "2026-09-07"
+        },
+        {
+          "url": "https://github.com/flashinfer-ai/flashinfer/pulls?q=is%3Apr+is%3Amerged+merged%3A2026-09-07..2026-10-05",
+          "title": "Pull requests · flashinfer-ai/flashinfer · GitHub",
+          "date": "2026-10-05"
+        }
+      ]
+    },
+    {
+      "name": "vendors",
+      "source_entry": "Parallel official-source directed search",
+      "window_start": "2026-10-30T08:00:00+08:00",
+      "window_end_exclusive": "2026-11-06T08:00:00+08:00",
+      "result": "候选检索，逐条核验后入选",
+      "sources": [
+        {
+          "url": "https://www.amd.com/en/developer/resources/technical-articles/2026/kimi-k3-1-pro-on-amd-instinct-gpus.html",
+          "title": "Kimi K3.1 Pro on AMD Instinct GPUs",
+          "date": "2026-11-04"
+        },
+        {
+          "url": "https://vllm.ai/blog/2026-11-04-kimi-k31-pro",
+          "title": "vLLM Delivers Day-0 Support for Kimi K3.1 Pro | vLLM Blog",
+          "date": "2026-11-04"
+        },
+        {
+          "url": "https://arxiv.org/abs/2611.04323",
+          "title": "[2611.04323] FP4Quant: Efficient 4-Bit Communication Compression for Model-Parallel LLM Training",
+          "date": "2026-11-03"
+        },
+        {
+          "url": "https://haoailab.com/blogs/pika-h3-flex/",
+          "title": "Pika H3 Flex in FastVideo: 7x Faster, and Near Real Time in 4-bit | Hao AI Lab @ UCSD",
+          "date": "2026-11-03"
+        },
+        {
+          "url": "https://www.amd.com/en/developer/resources/technical-articles/2026/dynamic-lora-on-amd-ryzen-ai.html",
+          "title": "Dynamic LoRA on AMD Ryzen AI",
+          "date": "2026-11-02"
+        },
+        {
+          "url": "https://nvidia.github.io/TensorRT-LLM/latest/blogs/tech_blog/blog03_Optimizing_DeepSeek_R1_Throughput_on_NVIDIA_Blackwell_GPUs.html",
+          "title": "Optimizing DeepSeek R1 Throughput on NVIDIA Blackwell GPUs: A Deep Dive for Developers — TensorRT LLM",
+          "date": null
+        },
+        {
+          "url": "https://aclanthology.org/people/david-limpus/",
+          "title": "David Limpus - ACL Anthology",
+          "date": null
+        },
+        {
+          "url": "https://de.dataconomy.com/2026/11/04/nvidia-steigert-den-durchsatz-von-ling-3-0-flash-auf-dgx-spark-um-425/",
+          "title": "NVIDIA steigert den Durchsatz von Ling-3.0-flash auf DGX Spark um 42,5 % - Dataconomy DE",
+          "date": "2026-11-04"
+        },
+        {
+          "url": "https://aclanthology.org/people/linghan-ai/",
+          "title": "Linghan Ai - ACL Anthology",
+          "date": null
+        },
+        {
+          "url": "https://x.com/ivanfioravanti/status/2117517343958184143",
+          "title": "Ivan Fioravanti on X: \"@AiAdventurerx @MiaAI_lab ngran are on SSD not in memory\" / X",
+          "date": "2026-11-03"
+        }
+      ]
+    }
+  ],
+  "research_supplement_20261106": {
+    "verified_commit_details": [
+      {
+        "repo": "NVIDIA/TransformerEngine",
+        "sha": "b021980343e33fdd5b091f95fd13f82e05d581af",
+        "committed_at": "2026-11-02T23:26:23Z",
+        "files_reviewed": [
+          "docs/api/pytorch.rst",
+          "qa/L0_pytorch_unittest/test.sh",
+          "tests/pytorch/test_batched_linear.py",
+          "tests/pytorch/test_fusible_ops.py",
+          "tests/pytorch/test_strided_batched_gemm.py",
+          "transformer_engine/common/CMakeLists.txt",
+          "transformer_engine/common/gemm/cublaslt_batched_gemm.cu",
+          "transformer_engine/common/include/transformer_engine/gemm.h",
+          "transformer_engine/common/include/transformer_engine/swizzle.h",
+          "transformer_engine/common/swizzle/swizzle.cu",
+          "transformer_engine/pytorch/cpp_extensions/gemm.py",
+          "transformer_engine/pytorch/csrc/extensions.h",
+          "transformer_engine/pytorch/csrc/extensions/gemm.cpp",
+          "transformer_engine/pytorch/csrc/extensions/pybind.cpp",
+          "transformer_engine/pytorch/ops/basic/__init__.py",
+          "transformer_engine/pytorch/ops/basic/batched_linear.py"
+        ]
+      },
+      {
+        "repo": "NVIDIA/Megatron-LM",
+        "sha": "ebcf9d67221d3fc19bd131ff3e6077d6da6fea0a",
+        "committed_at": "2026-11-03T18:59:10Z",
+        "files_reviewed": [
+          "megatron/core/resharding/refit.py",
+          "megatron/core/transformer/moe/batch_invariant.py",
+          "megatron/core/transformer/moe/experts.py",
+          "megatron/core/transformer/moe/moe_layer.py",
+          "megatron/core/transformer/moe/training_matches_inference.py",
+          "megatron/core/transformer/transformer_config.py",
+          "tests/unit_tests/determinism/kernels/manifest.py",
+          "tests/unit_tests/determinism/kernels/test_moe_kernels.py",
+          "tests/unit_tests/inference/test_flashinfer_nvfp4.py",
+          "tests/unit_tests/inference/test_moe_training_matches_inference.py",
+          "tests/unit_tests/models/test_hybrid_moe_model.py"
+        ]
+      },
+      {
+        "repo": "intel/auto-round",
+        "sha": "5db1082901dfba6e710f46e11bcc00cad30a5af3",
+        "committed_at": "2026-11-05T05:13:05Z",
+        "files_reviewed": [
+          ".github/copilot-instructions.md",
+          "README.md",
+          "README_CN.md",
+          "auto_round/__init__.py",
+          "auto_round/algorithms/base.py",
+          "auto_round/algorithms/block_runner.py",
+          "auto_round/algorithms/composer.py",
+          "auto_round/algorithms/config_resolver.py",
+          "auto_round/algorithms/quantization/adam_round/adam.py",
+          "auto_round/algorithms/quantization/base.py",
+          "auto_round/algorithms/quantization/config.py",
+          "auto_round/algorithms/quantization/qad/config.py",
+          "auto_round/algorithms/quantization/qad/quantizer.py",
+          "auto_round/algorithms/quantization/qad/teacher_cache.py",
+          "auto_round/algorithms/quantization/qat/config.py",
+          "auto_round/algorithms/quantization/qat/quantizer.py",
+          "auto_round/algorithms/quantization/rtn/quantizer.py",
+          "auto_round/algorithms/quantization/search_dispatch.py",
+          "auto_round/algorithms/quantization/sign_round/config.py",
+          "auto_round/algorithms/quantization/sign_round/quantizer.py",
+          "auto_round/algorithms/quantization/sign_roundv2/quantizer.py",
+          "auto_round/algorithms/registry.py",
+          "auto_round/algorithms/transforms/awq/base.py",
+          "auto_round/algorithms/transforms/awq/config.py",
+          "auto_round/algorithms/transforms/awq/qdq.py",
+          "auto_round/algorithms/transforms/awq/smooth.py",
+          "auto_round/algorithms/transforms/svdquant/apply.py",
+          "auto_round/autoround.py",
+          "auto_round/calibration/base.py",
+          "auto_round/calibration/llm.py",
+          "auto_round/calibration/utils.py",
+          "auto_round/cli/algorithms.py",
+          "auto_round/cli/main.py",
+          "auto_round/cli/parser.py",
+          "auto_round/compressors/base.py",
+          "auto_round/compressors/diffusion/dataset.py",
+          "auto_round/compressors/orchestrator.py",
+          "auto_round/context/compress.py",
+          "auto_round/context/model.py",
+          "auto_round/data_type/nvfp.py",
+          "auto_round/data_type/utils.py",
+          "auto_round/envs.py",
+          "auto_round/export/export_to_gguf/llama_cpp_conversion.py",
+          "auto_round/logger.py",
+          "auto_round/modeling/fused_moe/grouped_experts.py",
+          "auto_round/modeling/fused_moe/moe_experts_interface.py",
+          "auto_round/modeling/fused_moe/utils.py",
+          "auto_round/parallel/__init__.py",
+          "auto_round/parallel/config.py",
+          "auto_round/parallel/distributed.py",
+          "auto_round/parallel/dp/__init__.py",
+          "auto_round/parallel/dp/engine.py",
+          "auto_round/parallel/dp/mirror_sync.py",
+          "auto_round/parallel/dp/spmd.py",
+          "auto_round/parallel/dp/tune_parallel.py",
+          "auto_round/parallel/execution.py",
+          "auto_round/parallel/pp/__init__.py",
+          "auto_round/parallel/pp/placement.py",
+          "auto_round/parallel/prepared.py",
+          "auto_round/parallel/tp/__init__.py",
+          "auto_round/parallel/tp/activation.py",
+          "auto_round/parallel/tp/evaluation.py",
+          "auto_round/parallel/tp/launcher.py",
+          "auto_round/parallel/tp/moe.py",
+          "auto_round/parallel/tp/policy.py",
+          "auto_round/parallel/tp/qdq.py",
+          "auto_round/parallel/tp/runtime.py",
+          "auto_round/parallel/tp/tensor_ops.py",
+          "auto_round/scheme_entry.py",
+          "auto_round/schemes.py",
+          "auto_round/utils/device.py",
+          "auto_round/utils/device_manager.py",
+          "auto_round/utils/model.py",
+          "auto_round/wrapper.py",
+          "docs/calibration_acc.md",
+          "docs/environments.md",
+          "docs/environments_CN.md",
+          "docs/parallelism.md",
+          "docs/parallelism_CN.md",
+          "docs/step_by_step.md",
+          "docs/step_by_step_CN.md",
+          "test/unit/common/compressors/test_reference_output.py",
+          "test/unit/common/core/test_awq_autoround_smoke.py",
+          "test/unit/common/core/test_entry_normalization.py",
+          "test/unit/common/core/test_entry_scheme_unification.py",
+          "test/unit/common/core/test_pipeline_fast.py",
+          "test/unit/common/core/test_recipes.py",
+          "test/unit/common/core/test_wrapper_utils.py",
+          "test/unit/common/data_type/test_nvfp.py",
+          "test/unit/common/export/test_gguf_conversion_adapter.py",
+          "test/unit/common/utils/test_cli_usage.py",
+          "test/unit/common/utils/test_distributed.py",
+          "test/unit/test_cpu/algorithms/test_algorithm_nsamples.py",
+          "test/unit/test_cpu/algorithms/test_awq.py",
+          "test/unit/test_cpu/algorithms/test_composer_stages.py",
+          "test/unit/test_cpu/algorithms/test_distributed_cli.py",
+          "test/unit/test_cpu/algorithms/test_native_tp_qdq.py",
+          "test/unit/test_cpu/algorithms/test_parallel_entry.py",
+          "test/unit/test_cpu/algorithms/test_parallel_execution.py",
+          "test/unit/test_cpu/algorithms/test_parallel_reporting.py",
+          "test/unit/test_cpu/algorithms/test_prepared_run.py",
+          "test/unit/test_cpu/algorithms/test_qad_lora.py",
+          "test/unit/test_cpu/algorithms/test_qad_numerics_and_lifecycle.py",
+          "test/unit/test_cpu/algorithms/test_qad_review_regressions.py",
+          "test/unit/test_cpu/algorithms/test_qad_warm_start.py",
+          "test/unit/test_cpu/algorithms/test_signround_lora.py",
+          "test/unit/test_cpu/algorithms/test_single_process_evaluation.py",
+          "test/unit/test_cpu/core/test_entry_contract.py",
+          "test/unit/test_cpu/models/test_moe_grouped_experts.py",
+          "test/unit/test_cpu/quantization/test_attach_pool_placement.py",
+          "test/unit/test_cpu/quantization/test_ddp_core.py",
+          "test/unit/test_cpu/quantization/test_spmd_ranks.py",
+          "test/unit/test_cpu/quantization/test_tune_parallel_context.py",
+          "test/unit/test_cuda/algorithms/test_alg_ext.py",
+          "test/unit/test_cuda/algorithms/test_awq.py",
+          "test/unit/test_cuda/algorithms/test_parallel_execution.py",
+          "test/unit/test_cuda/quantization/test_ddp_mirror.py",
+          "test/unit/test_cuda/quantization/test_ddp_parity.py",
+          "test/unit/test_xpu/algorithms/test_awq.py"
+        ]
+      },
+      {
+        "repo": "NVIDIA/TensorRT-LLM",
+        "sha": "63468e65433004f8385b1c2975259b950eec633d",
+        "committed_at": "2026-11-04T07:05:44Z",
+        "files_reviewed": [
+          "docs/source/features/quantization.md",
+          "examples/models/core/deepseek_v4/README.md",
+          "tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py",
+          "tensorrt_llm/_torch/kernels/rubin/nvfp4_plus_quantize.py",
+          "tensorrt_llm/_torch/kernels/rubin/ue5m3_utils.py",
+          "tensorrt_llm/_torch/model_config.py",
+          "tensorrt_llm/_torch/models/modeling_dspark.py",
+          "tensorrt_llm/_torch/moe/fused_moe/MOE_DEVELOPER_GUIDE.md",
+          "tensorrt_llm/_torch/moe/fused_moe/__init__.py",
+          "tensorrt_llm/_torch/moe/fused_moe/cutedsl/__init__.py",
+          "tensorrt_llm/_torch/moe/fused_moe/cutedsl/grouped_gemm/__init__.py",
+          "tensorrt_llm/_torch/moe/fused_moe/cutedsl/grouped_gemm/nvfp4_plus.py",
+          "tensorrt_llm/_torch/moe/fused_moe/impl_contract.py",
+          "tensorrt_llm/_torch/moe/fused_moe/moe_resolution.py",
+          "tensorrt_llm/_torch/moe/fused_moe/quantization.py",
+          "tensorrt_llm/_torch/moe/kernels/rubin/rubin_contiguous_gather_grouped_blockscaled_gemm_act_fusion.py",
+          "tensorrt_llm/_torch/moe/kernels/rubin/rubin_contiguous_grouped_blockscaled_gemm_finalize_fusion.py",
+          "tensorrt_llm/_torch/peft/lora/validation.py",
+          "tensorrt_llm/_torch/utils.py",
+          "tensorrt_llm/llmapi/llm_utils.py",
+          "tensorrt_llm/quantization/mode.py",
+          "tensorrt_llm/quantization/modelopt_config.py",
+          "tensorrt_llm/quantization/utils/fp4_utils.py",
+          "tensorrt_llm/schemas/trtllm-serve-visual-gen-config.schema.json",
+          "tests/integration/defs/accuracy/references/gsm8k.yaml",
+          "tests/integration/defs/accuracy/test_llm_api_pytorch.py",
+          "tests/integration/test_lists/qa/llm_function_core.txt",
+          "tests/integration/test_lists/test-db/l0_cpu.yml",
+          "tests/integration/test_lists/test-db/l0_gr100.yml",
+          "tests/unittest/_torch/kernels/parallel/test_nvfp4_plus_quantize_rubin.py",
+          "tests/unittest/_torch/moe/moe_test_utils.py",
+          "tests/unittest/_torch/moe/quantize_utils.py",
+          "tests/unittest/_torch/moe/test_moe_backend.py",
+          "tests/unittest/_torch/moe/test_moe_impl.py",
+          "tests/unittest/_torch/test_model_config.py",
+          "tests/unittest/quantization/test_mode.py",
+          "tests/unittest/quantization/test_nvfp4_plus_format.py"
+        ]
+      },
+      {
+        "repo": "ROCm/aiter",
+        "sha": "5469555096de4b7ede0ea6a0cb2d1dd40138fb09",
+        "committed_at": "2026-11-04T01:37:43Z",
+        "files_reviewed": [
+          "aiter/ops/flydsl/kernels/pa_decode/context.py",
+          "aiter/ops/flydsl/kernels/pa_decode/op_epilog.py",
+          "aiter/ops/flydsl/kernels/pa_decode/op_gemm.py",
+          "aiter/ops/flydsl/kernels/pa_decode/op_lds.py",
+          "aiter/ops/flydsl/kernels/pa_decode/pipeline.py",
+          "aiter/ops/flydsl/kernels/pa_decode/traits.py",
+          "aiter/ops/flydsl/kernels/pa_decode_kernel.py",
+          "aiter/ops/flydsl/pa_decode.py",
+          "op_tests/test_flydsl_pa_decode.py"
+        ]
+      },
+      {
+        "repo": "ROCm/aiter",
+        "sha": "bc12ddf440f9401b2eb9fb2f01930ce05d2d39df",
+        "committed_at": "2026-11-03T11:56:24Z",
+        "files_reviewed": [
+          "aiter/ops/triton/_triton_kernels/attention/mxfp8_attention_kernel.py",
+          "aiter/ops/triton/attention/mha.py",
+          "aiter/ops/triton/attention/mxfp8_attention.py",
+          "aiter/ops/triton/configs/gfx950/triton/attention/mxfp8_attn/DEFAULT.json",
+          "aiter/ops/triton/utils/_triton/arch_info.py",
+          "op_tests/op_benchmarks/triton/bench_mxfp8_attention.py",
+          "op_tests/triton_tests/attention/test_mxfp8_attention_kernel.py"
+        ]
+      },
+      {
+        "repo": "ROCm/mori",
+        "sha": "e7c16edafedd9f58718b5cce3b7ec398c55bd776",
+        "committed_at": "2026-11-04T02:25:38Z",
+        "files_reviewed": [
+          ".github/workflows/ci_cco.yml",
+          "benchmark/cco/flydsl/ag_gemm/bench_ag_gemm.py",
+          "python/mori/ops/__init__.py",
+          "python/mori/ops/ag_gemm/README.md",
+          "python/mori/ops/ag_gemm/__init__.py",
+          "python/mori/ops/ag_gemm/kernels.py",
+          "python/mori/ops/ag_gemm/layout.py",
+          "python/mori/ops/ag_gemm/op.py",
+          "tests/python/cco/ag_gemm_op_worker.py",
+          "tests/python/cco/test_ag_gemm.py",
+          "tests/python/cco/test_ag_gemm_op.py"
+        ]
+      },
+      {
+        "repo": "pytorch/pytorch",
+        "sha": "77b184a94e545b62e43ea6945f808a86d7518ab4",
+        "committed_at": "2026-11-05T18:35:48Z",
+        "files_reviewed": [
+          "aten/src/ATen/native/mkldnn/xpu/detail/GroupedMatmul.cpp",
+          "aten/src/ATen/native/mkldnn/xpu/detail/Utils.cpp",
+          "aten/src/ATen/native/mkldnn/xpu/detail/oneDNN.h",
+          "aten/src/ATen/native/mkldnn/xpu/detail/oneDNNContext.h",
+          "aten/src/ATen/native/xpu/GroupedBlas.cpp",
+          "cmake/Modules/FindMKLDNN.cmake"
+        ]
+      }
+    ]
   }
 }
